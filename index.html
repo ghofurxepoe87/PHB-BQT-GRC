@@ -552,14 +552,14 @@
         const { createClient } = supabase;
         const supabaseUrl = 'https://hupvhnvztvzqbdhuukpt.supabase.co';
         
-        // PASTE-KAN KUNCI `sb_publishable_...` ANDA DI DALAM TANDA KUTIP DI BAWAH INI:
-        const supabaseKey = 'PASTE_KUNCI_PUBLISHABLE_DISINI'; 
+        // Kunci API Anda dimasukkan di sini:
+        const supabaseKey = 'sb_publishable_AvLLrrZ0-7F2_AXjC1LQhg_H_bolEmB'; 
         // ==========================================================
 
         const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
         let currentBudget = parseFloat(localStorage.getItem('banquet_budget')) || 5000000000;
-        let bookings = []; // Data kini kosong di awal, akan di-load dari Supabase
+        let bookings = []; 
 
         const allVenues = [
             "Convention Hall", "Convention 1", "Convention 2", "Convention 3",
@@ -577,7 +577,7 @@
             const { data, error } = await supabaseClient.from('reservations').select('*');
             if (error) {
                 console.error("Gagal mengambil data dari Supabase:", error);
-                alert("Koneksi Database Gagal. Pastikan API Key benar.");
+                alert("Koneksi Database Gagal. Tabel 'reservations' mungkin belum dibuat di SQL Editor.");
             } else {
                 bookings = data || [];
             }
@@ -1154,7 +1154,7 @@
             const item = bookings.find(b => b.id == id);
             
             const copiedItem = { ...item };
-            delete copiedItem.id; // Agar database buatkan ID baru
+            delete copiedItem.id; 
             copiedItem.groupname = item.groupname + " (Copy)";
             copiedItem.beomemo = 'BEO-2026-' + Math.floor(100 + Math.random() * 900);
             copiedItem.status = "Tentative";
@@ -1184,7 +1184,6 @@
             const item = bookings.find(b => b.id == id);
             const totalRev = item.bqtcover * item.price;
             
-            // Format Data
             const refNo = item.beomemo;
             const dateIssued = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'long', year: 'numeric'});
             const toClient = item.picbooker.toUpperCase();
@@ -1415,7 +1414,6 @@
         function printDashboardReport() { window.print(); }
         function printManagementReport() { window.print(); }
 
-        // MULAILAH MENARIK DATA DARI DATABASE SAAT HALAMAN DIBUKA
         populateVenues();
         loadBookings();
     </script>
