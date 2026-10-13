@@ -39,49 +39,29 @@
             }
         }
     </script>
-    <!-- FontAwesome for Icons -->
+    <!-- FontAwesome & SheetJS & Supabase JS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SheetJS for Excel Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
-        /* Smooth Scrolling */
         html { scroll-behavior: smooth; }
-
-        /* Sembunyikan scrollbar navigasi atas saja */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Custom Scrollbar Elegan untuk Tabel (Agar tidak terpotong) */
-        .table-container {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        .table-container::-webkit-scrollbar {
-            height: 8px;
-            width: 8px;
-        }
-        .table-container::-webkit-scrollbar-track {
-            background: #f8fafc; 
-            border-radius: 10px;
-        }
-        .table-container::-webkit-scrollbar-thumb {
-            background: #cbd5e1; 
-            border-radius: 10px;
-        }
-        .table-container::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; 
-        }
+        /* Custom Scrollbar Elegan untuk Tabel */
+        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .table-container::-webkit-scrollbar { height: 8px; width: 8px; }
+        .table-container::-webkit-scrollbar-track { background: #f8fafc; border-radius: 10px; }
+        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Animasi Modal */
         @keyframes slideUp {
             from { transform: translateY(50px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
         .animate-slide-up { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-        /* Sembunyikan elemen web saat mencetak dashboard/report */
         @media print {
             body { background-color: white !important; -webkit-print-color-adjust: exact; }
             body > header, .print-action-btn, #budget-modal, #booking-modal { display: none !important; }
@@ -105,7 +85,6 @@
             </div>
         </div>
         
-        <!-- App-like Scrollable Tabs (Semua tombol disejajarkan disini) -->
         <nav class="bg-navy-800 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-3">
@@ -122,10 +101,8 @@
                         <i class="fa-solid fa-file-lines"></i> Reports
                     </button>
                     
-                    <!-- Pembatas Visual -->
                     <div class="h-6 w-px bg-white/20 mx-2 hidden sm:block flex-shrink-0"></div>
                     
-                    <!-- Tombol New Booking Disejajarkan -->
                     <button onclick="openModal()" class="flex-shrink-0 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-5 py-2 rounded-full text-xs sm:text-sm shadow-md transition-all active:scale-95 flex items-center gap-2 border border-emerald-500/50">
                         <i class="fa-solid fa-plus"></i> New Booking
                     </button>
@@ -134,11 +111,15 @@
         </nav>
     </header>
 
-    <!-- Main Container -->
     <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-
         <!-- ================= TAB 1: DASHBOARD ================= -->
         <div id="tab-dashboard" class="space-y-6 animate-fade-in">
+            <!-- Loading Indicator -->
+            <div id="loading-indicator" class="text-center py-4 hidden">
+                <i class="fa-solid fa-circle-notch fa-spin text-gold-500 text-2xl"></i>
+                <p class="text-xs text-slate-500 mt-2 font-medium">Syncing with Cloud Database...</p>
+            </div>
+
             <!-- KPI Cards Grid -->
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 transition hover:shadow-md">
@@ -157,14 +138,12 @@
                     <p class="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-chart-line text-blue-500"></i> Potential Rev</p>
                     <h3 id="kpi-potential-rev" class="text-sm sm:text-[15px] font-bold text-blue-600 mt-1.5">Rp 0</h3>
                 </div>
-                <!-- VARIANCE (Premium gradient) -->
                 <div class="bg-gradient-to-br from-navy-800 to-navy-900 p-4 rounded-2xl shadow-lg shadow-navy-900/20 text-white relative overflow-hidden group">
                     <div class="absolute -right-4 -top-4 w-16 h-16 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-all duration-500"></div>
                     <p class="text-[10px] sm:text-xs font-medium text-slate-300 uppercase tracking-wider">Variance vs Budget</p>
                     <h3 id="kpi-variance" class="text-sm sm:text-base font-bold mt-1.5 text-white">Rp 0</h3>
                 </div>
 
-                <!-- Baris Bawah KPI -->
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 transition hover:shadow-md">
                     <div class="flex justify-between items-center">
                         <p class="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-bullseye text-purple-500"></i> Target Budget</p>
@@ -224,7 +203,6 @@
                     <h2 class="font-bold text-navy-900 text-sm sm:text-base flex items-center gap-2"><i class="fa-solid fa-list-check text-gold-500"></i> Master Schedule</h2>
                     <span id="record-count" class="text-xs font-semibold text-navy-600 bg-navy-50 px-3 py-1 rounded-full border border-navy-100">0 Entries</span>
                 </div>
-                <!-- Custom Scrollbar agar tabel bisa digeser -->
                 <div class="table-container pb-2">
                     <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
                         <thead>
@@ -413,7 +391,7 @@
             
             <div class="p-6 overflow-y-auto table-container space-y-4">
                 <form id="booking-form" onsubmit="saveBooking(event)">
-                    <input type="hidden" id="edit-index" value="">
+                    <input type="hidden" id="edit-id" value="">
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
@@ -568,46 +546,20 @@
         </div>
     </div>
 
-    <!-- JavaScript Logic -->
+    <!-- JavaScript Logic & Supabase Integration -->
     <script>
-        let currentBudget = parseFloat(localStorage.getItem('banquet_budget')) || 5000000000;
+        // ================= KONEKSI DATABASE CLOUD =================
+        const { createClient } = supabase;
+        const supabaseUrl = 'https://hupvhnvztvzqbdhuukpt.supabase.co';
+        
+        // PASTE-KAN KUNCI `sb_publishable_...` ANDA DI DALAM TANDA KUTIP DI BAWAH INI:
+        const supabaseKey = 'PASTE_KUNCI_PUBLISHABLE_DISINI'; 
+        // ==========================================================
 
-        let bookings = JSON.parse(localStorage.getItem('banquet_reservations')) || [
-            {
-                groupName: "Rapat Koordinasi Pengamanan",
-                picBooker: "POLDA KALTIM",
-                clientAddress: "Jl. Jend. Sudirman, Balikpapan",
-                clientWa: "0811555666",
-                beoMemo: "341/PBHCH-CL/SM/2026",
-                segment: "Government",
-                status: "Confirmed",
-                salesPerson: "Nazar",
-                dateTime: "2026-10-05",
-                venue: "Convention Hall",
-                bqtCover: 200,
-                price: 300000,
-                packageType: "Dinner Package",
-                setUp: "Classroom",
-                remark: "VIP setup required"
-            },
-            {
-                groupName: "Wahyudi & Citra Wedding",
-                picBooker: "Mrs. Citra Lestari",
-                clientAddress: "Jl. MT Haryono No. 12, Balikpapan",
-                clientWa: "08123456789",
-                beoMemo: "BEO-2026-002",
-                segment: "Wedding",
-                status: "Confirmed",
-                salesPerson: "Lia",
-                dateTime: "2026-06-20",
-                venue: "Grand Ballroom",
-                bqtCover: 500,
-                price: 350000,
-                packageType: "Wedding Buffet",
-                setUp: "Round Table",
-                remark: "Extra stage lighting requested"
-            }
-        ];
+        const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+        let currentBudget = parseFloat(localStorage.getItem('banquet_budget')) || 5000000000;
+        let bookings = []; // Data kini kosong di awal, akan di-load dari Supabase
 
         const allVenues = [
             "Convention Hall", "Convention 1", "Convention 2", "Convention 3",
@@ -618,6 +570,23 @@
             "Rhodium 6", "Rhodium 7", "Rhodium 8", "Rhodium 9", "Rhodium 10", 
             "Rhodium 11", "Rhodium 12", "Canton Restaurant", "PDR Canton", "PDR Palladium"
         ];
+
+        async function loadBookings() {
+            document.getElementById('loading-indicator').classList.remove('hidden');
+            
+            const { data, error } = await supabaseClient.from('reservations').select('*');
+            if (error) {
+                console.error("Gagal mengambil data dari Supabase:", error);
+                alert("Koneksi Database Gagal. Pastikan API Key benar.");
+            } else {
+                bookings = data || [];
+            }
+            
+            document.getElementById('loading-indicator').classList.add('hidden');
+            renderTable();
+            renderAvailabilitySummary();
+            renderRoomCalendar();
+        }
 
         function populateVenues() {
             const venueSelect = document.getElementById('venue');
@@ -681,8 +650,6 @@
             renderTable();
         }
 
-        function saveToStorage() { localStorage.setItem('banquet_reservations', JSON.stringify(bookings)); }
-
         function switchTab(tabName) {
             const tabs = ['dashboard', 'availability', 'calendar', 'reports'];
             tabs.forEach(t => {
@@ -719,20 +686,20 @@
         }
 
         function renderTable(filteredData = bookings) {
-            let sortedData = [...filteredData].sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
+            let sortedData = [...filteredData].sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
             const tbody = document.getElementById('reservation-table-body');
             tbody.innerHTML = '';
 
             let totalBookings = sortedData.length;
             let confirmedRev = 0, tentativeRev = 0, totalCovers = 0, cancelledCount = 0;
 
-            sortedData.forEach((item, index) => {
-                const totalRev = item.bqtCover * item.price;
+            sortedData.forEach((item) => {
+                const totalRev = item.bqtcover * item.price;
                 if (item.status === 'Confirmed' || item.status === 'Finished') confirmedRev += totalRev;
                 else if (item.status === 'Tentative') tentativeRev += totalRev;
                 else if (item.status === 'Cancelled') cancelledCount++;
                 
-                totalCovers += parseInt(item.bqtCover || 0);
+                totalCovers += parseInt(item.bqtcover || 0);
 
                 let statusBadge = '';
                 if (item.status === 'Confirmed') statusBadge = '<span class="px-2.5 py-1 text-[10px] font-bold bg-emerald-100 text-emerald-700 rounded-md border border-emerald-200">Confirmed</span>';
@@ -740,38 +707,36 @@
                 else if (item.status === 'Finished') statusBadge = '<span class="px-2.5 py-1 text-[10px] font-bold bg-blue-100 text-blue-700 rounded-md border border-blue-200">Finished</span>';
                 else statusBadge = '<span class="px-2.5 py-1 text-[10px] font-bold bg-rose-100 text-rose-700 rounded-md border border-rose-200">Cancelled</span>';
 
-                const originalIndex = bookings.findIndex(b => b === item);
-
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition-colors border-b border-slate-100";
+                tr.className = "hover:bg-slate-50 transition-colors border-b border-slate-50";
                 tr.innerHTML = `
-                    <td class="py-3.5 px-5 text-slate-600 font-medium">${formatDateID(item.dateTime)}</td>
+                    <td class="py-3.5 px-5 text-slate-600 font-medium">${formatDateID(item.datetime)}</td>
                     <td class="py-3.5 px-5">
-                        <div class="font-bold text-navy-900 text-[13px]">${item.groupName}</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5">PIC: ${item.picBooker} <span class="opacity-50">|</span> ${item.beoMemo}</div>
+                        <div class="font-bold text-navy-900 text-[13px]">${item.groupname}</div>
+                        <div class="text-[10px] text-slate-500 mt-0.5">PIC: ${item.picbooker} <span class="opacity-50">|</span> ${item.beomemo}</div>
                     </td>
-                    <td class="py-3.5 px-5 text-slate-600"><span class="bg-slate-100 border border-slate-200 px-2 py-1 rounded-md text-[10px] font-medium">${item.segment}</span></td>
+                    <td class="py-3.5 px-5 text-slate-600"><span class="bg-slate-100 border border-slate-200 px-2 py-1.5 rounded-md text-[10px] font-medium">${item.segment}</span></td>
                     <td class="py-3.5 px-5 font-bold text-navy-800">${item.venue}</td>
                     <td class="py-3.5 px-5">
-                        <div class="font-medium text-slate-800">${item.packageType}</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5">${item.setUp} Setup</div>
+                        <div class="font-medium text-slate-800">${item.packagetype}</div>
+                        <div class="text-[10px] text-slate-500 mt-0.5">${item.setup} Setup</div>
                     </td>
-                    <td class="py-3.5 px-5 text-right font-medium text-slate-700">${item.bqtCover}</td>
+                    <td class="py-3.5 px-5 text-right font-medium text-slate-700">${item.bqtcover}</td>
                     <td class="py-3.5 px-5 text-right font-bold text-navy-900">${formatIDR(totalRev)}</td>
                     <td class="py-3.5 px-5">
-                        <select onchange="quickUpdateStatus(${originalIndex}, this.value)" class="text-[10px] font-bold py-1.5 px-2 rounded-md border border-slate-200 bg-white text-slate-700 focus:outline-none focus:border-gold-500 cursor-pointer shadow-sm">
+                        <select onchange="quickUpdateStatus(${item.id}, this.value)" class="text-[10px] font-bold py-1.5 px-2 rounded-md border border-slate-200 bg-white text-slate-700 focus:outline-none focus:border-gold-500 cursor-pointer shadow-sm">
                             <option value="Tentative" ${item.status === 'Tentative' ? 'selected' : ''}>Tentative</option>
                             <option value="Confirmed" ${item.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
                             <option value="Finished" ${item.status === 'Finished' ? 'selected' : ''}>Finished</option>
                             <option value="Cancelled" ${item.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
                         </select>
                     </td>
-                    <td class="py-3.5 px-5 text-slate-600 font-medium">${item.salesPerson}</td>
+                    <td class="py-3.5 px-5 text-slate-600 font-medium">${item.salesperson}</td>
                     <td class="py-3.5 px-5 text-center whitespace-nowrap space-x-1">
-                        <button onclick="generatePDFDirect(${originalIndex})" class="bg-gold-500/20 text-gold-700 hover:bg-gold-500 hover:text-white w-8 h-8 rounded-lg transition-colors font-bold" title="Generate Confirmation Letter (PDF)"><i class="fa-solid fa-file-contract"></i></button>
-                        <button onclick="copyBooking(${originalIndex})" class="bg-indigo-500/10 text-indigo-600 hover:bg-indigo-500 hover:text-white w-8 h-8 rounded-lg transition-colors font-medium" title="Copy Booking"><i class="fa-solid fa-copy"></i></button>
-                        <button onclick="editBooking(${originalIndex})" class="bg-navy-900/10 text-navy-800 hover:bg-navy-800 hover:text-white w-8 h-8 rounded-lg transition-colors font-medium" title="Edit Booking"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="deleteBooking(${originalIndex})" class="text-rose-500 hover:bg-rose-50 w-8 h-8 rounded-lg transition-colors" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="generatePDFDirect(${item.id})" class="bg-gold-500/20 text-gold-700 hover:bg-gold-500 hover:text-white w-8 h-8 rounded-lg transition-colors font-bold" title="Generate Confirmation Letter (PDF)"><i class="fa-solid fa-file-contract"></i></button>
+                        <button onclick="copyBooking(${item.id})" class="bg-indigo-500/10 text-indigo-600 hover:bg-indigo-500 hover:text-white w-8 h-8 rounded-lg transition-colors font-medium" title="Copy Booking"><i class="fa-solid fa-copy"></i></button>
+                        <button onclick="editBooking(${item.id})" class="bg-navy-900/10 text-navy-800 hover:bg-navy-800 hover:text-white w-8 h-8 rounded-lg transition-colors font-medium" title="Edit Booking"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteBooking(${item.id})" class="text-rose-500 hover:bg-rose-50 w-8 h-8 rounded-lg transition-colors" title="Delete"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -824,13 +789,13 @@
             while (currentDate <= end) {
                 let dateFormatted = currentDate.toISOString().split('T')[0];
                 venuesToCheck.forEach(venue => {
-                    const booking = bookings.find(b => b.venue === venue && b.dateTime === dateFormatted && b.status !== 'Cancelled');
+                    const booking = bookings.find(b => b.venue === venue && b.datetime === dateFormatted && b.status !== 'Cancelled');
                     let statusHtml = '', detailsHtml = '';
 
                     if (booking) {
                         let badgeColor = (booking.status === 'Confirmed' || booking.status === 'Finished') ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-amber-100 text-amber-800 border-amber-200';
                         statusHtml = `<span class="px-2.5 py-1 text-[10px] font-bold rounded-lg border ${badgeColor}">Booked (${booking.status})</span>`;
-                        detailsHtml = `<span class="font-bold text-navy-900">${booking.groupName}</span> <span class="text-xs text-slate-500">| ${booking.picBooker} | ${booking.bqtCover} Pax</span>`;
+                        detailsHtml = `<span class="font-bold text-navy-900">${booking.groupname}</span> <span class="text-xs text-slate-500">| ${booking.picbooker} | ${booking.bqtcover} Pax</span>`;
                     } else {
                         statusHtml = `<span class="px-2.5 py-1 text-[10px] font-bold rounded-lg bg-emerald-500 text-white">Available</span>`;
                         detailsHtml = `<span class="text-slate-400 italic">Room ready for booking</span>`;
@@ -856,7 +821,7 @@
             container.innerHTML = '';
 
             allVenues.forEach(venue => {
-                const booking = bookings.find(b => b.venue === venue && b.dateTime === selectedDate && b.status !== 'Cancelled');
+                const booking = bookings.find(b => b.venue === venue && b.datetime === selectedDate && b.status !== 'Cancelled');
                 const card = document.createElement('div');
 
                 if (booking) {
@@ -872,9 +837,9 @@
                                 <span class="px-2 py-0.5 text-[9px] font-bold rounded-md ${badgeColor}">${booking.status}</span>
                             </div>
                             <div class="text-xs space-y-1.5 mt-3">
-                                <p class="font-bold text-navy-900 truncate" title="${booking.groupName}">${booking.groupName}</p>
-                                <p class="text-slate-600">PIC: ${booking.picBooker}</p>
-                                <p class="text-slate-500 text-[10px] font-medium">Sales: ${booking.salesPerson} &bull; ${booking.bqtCover} Pax</p>
+                                <p class="font-bold text-navy-900 truncate" title="${booking.groupname}">${booking.groupname}</p>
+                                <p class="text-slate-600">PIC: ${booking.picbooker}</p>
+                                <p class="text-slate-500 text-[10px] font-medium">Sales: ${booking.salesperson} &bull; ${booking.bqtcover} Pax</p>
                             </div>
                         </div>
                     `;
@@ -898,10 +863,10 @@
         }
 
         function initReports() {
-            const salesSet = [...new Set(bookings.map(b => b.salesPerson))];
+            const salesSet = [...new Set(bookings.map(b => b.salesperson))];
             const segmentSet = [...new Set(bookings.map(b => b.segment))];
             const venueSet = [...new Set(bookings.map(b => b.venue))];
-            const packageSet = [...new Set(bookings.map(b => b.packageType))];
+            const packageSet = [...new Set(bookings.map(b => b.packagetype))];
 
             function populateSelect(id, set, defaultText) {
                 const sel = document.getElementById(id);
@@ -929,25 +894,25 @@
 
             const filtered = bookings.filter(item => {
                 let matchDate = true;
-                if (fromDate && item.dateTime < fromDate) matchDate = false;
-                if (toDate && item.dateTime > toDate) matchDate = false;
+                if (fromDate && item.datetime < fromDate) matchDate = false;
+                if (toDate && item.datetime > toDate) matchDate = false;
 
-                const matchSales = salesFilter === "" || item.salesPerson === salesFilter;
+                const matchSales = salesFilter === "" || item.salesperson === salesFilter;
                 const matchSegment = segmentFilter === "" || item.segment === segmentFilter;
                 const matchVenue = venueFilter === "" || item.venue === venueFilter;
-                const matchPackage = packageFilter === "" || item.packageType === packageFilter;
+                const matchPackage = packageFilter === "" || item.packagetype === packageFilter;
 
                 return matchDate && matchSales && matchSegment && matchVenue && matchPackage;
             });
 
-            let sortedFiltered = [...filtered].sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
+            let sortedFiltered = [...filtered].sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
             const tbody = document.getElementById('report-table-body');
             tbody.innerHTML = '';
 
             let repBookings = sortedFiltered.length, repConfirmedRev = 0, repTentativeRev = 0;
 
             sortedFiltered.forEach(item => {
-                const rev = item.bqtCover * item.price;
+                const rev = item.bqtcover * item.price;
                 if (item.status === 'Confirmed' || item.status === 'Finished') repConfirmedRev += rev;
                 else if (item.status === 'Tentative') repTentativeRev += rev;
 
@@ -960,11 +925,11 @@
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 border-b border-slate-100";
                 tr.innerHTML = `
-                    <td class="py-3 px-5 font-medium text-slate-600">${formatDateID(item.dateTime)}</td>
-                    <td class="py-3 px-5 font-bold text-navy-900">${item.groupName} <span class="text-[10px] text-slate-500 font-normal block mt-0.5">${item.picBooker}</span></td>
-                    <td class="py-3 px-5 font-semibold text-navy-800">${item.venue} <span class="text-[10px] text-slate-500 font-normal block mt-0.5">${item.setUp} Setup</span></td>
-                    <td class="py-3 px-5 font-medium">${item.packageType}</td>
-                    <td class="py-3 px-5 text-right">${item.bqtCover} Pax <span class="text-[11px] text-navy-900 font-black block mt-0.5">${formatIDR(rev)}</span></td>
+                    <td class="py-3 px-5 font-medium text-slate-600">${formatDateID(item.datetime)}</td>
+                    <td class="py-3 px-5 font-bold text-navy-900">${item.groupname} <span class="text-[10px] text-slate-500 font-normal block mt-0.5">${item.picbooker}</span></td>
+                    <td class="py-3 px-5 font-semibold text-navy-800">${item.venue} <span class="text-[10px] text-slate-500 font-normal block mt-0.5">${item.setup} Setup</span></td>
+                    <td class="py-3 px-5 font-medium">${item.packagetype}</td>
+                    <td class="py-3 px-5 text-right">${item.bqtcover} Pax <span class="text-[11px] text-navy-900 font-black block mt-0.5">${formatIDR(rev)}</span></td>
                     <td class="py-3 px-5">${statusBadge}</td>
                 `;
                 tbody.appendChild(tr);
@@ -991,10 +956,10 @@
             const segmentFilter = document.getElementById('filter-segment').value;
 
             const filtered = bookings.filter(item => {
-                const matchQuery = item.groupName.toLowerCase().includes(query) ||
-                                   item.picBooker.toLowerCase().includes(query) ||
-                                   item.beoMemo.toLowerCase().includes(query) ||
-                                   item.salesPerson.toLowerCase().includes(query);
+                const matchQuery = item.groupname.toLowerCase().includes(query) ||
+                                   item.picbooker.toLowerCase().includes(query) ||
+                                   item.beomemo.toLowerCase().includes(query) ||
+                                   item.salesperson.toLowerCase().includes(query);
                 const matchStatus = statusFilter === "" || item.status === statusFilter;
                 const matchSegment = segmentFilter === "" || item.segment === segmentFilter;
                 return matchQuery && matchStatus && matchSegment;
@@ -1042,62 +1007,62 @@
             document.getElementById('date-time').value = dateStr;
         }
 
-        function openModal(editIndex = null) {
+        function openModal(editId = null) {
             document.getElementById('booking-modal').classList.remove('hidden');
             const standardSales = ["Nazar", "Lia", "Dapit", "Icha", "Ovy"];
             const standardPackages = ["CB", "HDM", "FDM", "FBD Non Res", "FBD Res", "Wedding Buffet", "Wedding Ciatok", "Social Event", "Room Rent", "Gathering", "Barbeque", "Wisuda", "Dinner Package", "Birthday Package", "Engagement", "Seminar", "Other"];
             const standardSetups = ["Classroom", "U Shape", "Round Table", "BoardRoom", "Theater", "Other"];
 
-            if (editIndex !== null) {
+            if (editId !== null) {
                 document.getElementById('modal-title').innerHTML = '<i class="fa-solid fa-pen-to-square text-gold-500"></i> Edit Reservation';
-                document.getElementById('edit-index').value = editIndex;
-                const item = bookings[editIndex];
+                document.getElementById('edit-id').value = editId;
+                const item = bookings.find(b => b.id == editId);
                 
-                document.getElementById('group-name').value = item.groupName;
-                document.getElementById('pic-booker').value = item.picBooker;
-                document.getElementById('client-address').value = item.clientAddress || '';
-                document.getElementById('client-wa').value = item.clientWa || '';
-                document.getElementById('beo-memo').value = item.beoMemo;
+                document.getElementById('group-name').value = item.groupname;
+                document.getElementById('pic-booker').value = item.picbooker;
+                document.getElementById('client-address').value = item.clientaddress || '';
+                document.getElementById('client-wa').value = item.clientwa || '';
+                document.getElementById('beo-memo').value = item.beomemo;
                 document.getElementById('segment').value = item.segment;
                 document.getElementById('status').value = item.status;
-                document.getElementById('date-time').value = item.dateTime;
+                document.getElementById('date-time').value = item.datetime;
                 document.getElementById('venue').value = item.venue;
-                document.getElementById('bqt-cover').value = item.bqtCover;
+                document.getElementById('bqt-cover').value = item.bqtcover;
                 document.getElementById('price').value = item.price;
                 document.getElementById('price-formatted').value = formatNumberWithDots(item.price);
                 document.getElementById('remark').value = item.remark || '';
                 
                 handleStatusChangeModal();
 
-                if (standardSales.includes(item.salesPerson)) {
-                    document.getElementById('sales-person-select').value = item.salesPerson;
+                if (standardSales.includes(item.salesperson)) {
+                    document.getElementById('sales-person-select').value = item.salesperson;
                     document.getElementById('sales-person-custom').classList.add('hidden');
                 } else {
                     document.getElementById('sales-person-select').value = 'Other';
                     document.getElementById('sales-person-custom').classList.remove('hidden');
-                    document.getElementById('sales-person-custom').value = item.salesPerson;
+                    document.getElementById('sales-person-custom').value = item.salesperson;
                 }
 
-                if (standardPackages.includes(item.packageType)) {
-                    document.getElementById('package-type').value = item.packageType;
+                if (standardPackages.includes(item.packagetype)) {
+                    document.getElementById('package-type').value = item.packagetype;
                     document.getElementById('package-custom').classList.add('hidden');
                 } else {
                     document.getElementById('package-type').value = 'Other';
                     document.getElementById('package-custom').classList.remove('hidden');
-                    document.getElementById('package-custom').value = item.packageType;
+                    document.getElementById('package-custom').value = item.packagetype;
                 }
 
-                if (standardSetups.includes(item.setUp)) {
-                    document.getElementById('set-up').value = item.setUp;
+                if (standardSetups.includes(item.setup)) {
+                    document.getElementById('set-up').value = item.setup;
                     document.getElementById('setup-custom').classList.add('hidden');
                 } else {
                     document.getElementById('set-up').value = 'Other';
                     document.getElementById('setup-custom').classList.remove('hidden');
-                    document.getElementById('setup-custom').value = item.setUp;
+                    document.getElementById('setup-custom').value = item.setup;
                 }
             } else {
                 document.getElementById('modal-title').innerHTML = '<i class="fa-solid fa-circle-plus text-gold-500"></i> New Reservation';
-                document.getElementById('edit-index').value = '';
+                document.getElementById('edit-id').value = '';
                 document.getElementById('booking-form').reset();
                 
                 document.getElementById('sales-person-custom').classList.add('hidden');
@@ -1115,9 +1080,9 @@
 
         function closeModal() { document.getElementById('booking-modal').classList.add('hidden'); }
 
-        function saveBooking(event) {
+        async function saveBooking(event) {
             event.preventDefault();
-            const editIndex = document.getElementById('edit-index').value;
+            const editId = document.getElementById('edit-id').value;
 
             let salesVal = document.getElementById('sales-person-select').value;
             if (salesVal === 'Other') salesVal = document.getElementById('sales-person-custom').value;
@@ -1128,89 +1093,111 @@
             let setupVal = document.getElementById('set-up').value;
             if (setupVal === 'Other') setupVal = document.getElementById('setup-custom').value;
 
-            const newItem = {
-                groupName: document.getElementById('group-name').value,
-                picBooker: document.getElementById('pic-booker').value,
-                clientAddress: document.getElementById('client-address').value,
-                clientWa: document.getElementById('client-wa').value,
-                beoMemo: document.getElementById('beo-memo').value || 'BEO-2026-' + Math.floor(100 + Math.random() * 900),
+            const dbItem = {
+                groupname: document.getElementById('group-name').value,
+                picbooker: document.getElementById('pic-booker').value,
+                clientaddress: document.getElementById('client-address').value,
+                clientwa: document.getElementById('client-wa').value,
+                beomemo: document.getElementById('beo-memo').value || 'BEO-2026-' + Math.floor(100 + Math.random() * 900),
                 segment: document.getElementById('segment').value,
                 status: document.getElementById('status').value,
-                salesPerson: salesVal,
-                dateTime: document.getElementById('date-time').value,
+                salesperson: salesVal,
+                datetime: document.getElementById('date-time').value,
                 venue: document.getElementById('venue').value,
-                bqtCover: parseInt(document.getElementById('bqt-cover').value),
+                bqtcover: parseInt(document.getElementById('bqt-cover').value),
                 price: parseFloat(document.getElementById('price').value),
-                packageType: pkgVal,
-                setUp: setupVal,
+                packagetype: pkgVal,
+                setup: setupVal,
                 remark: document.getElementById('remark').value
             };
 
-            if (editIndex === "") bookings.push(newItem);
-            else bookings[editIndex] = newItem;
-
-            saveToStorage();
             closeModal();
+            document.getElementById('loading-indicator').classList.remove('hidden');
+
+            if (editId === "") {
+                const { data, error } = await supabaseClient.from('reservations').insert([dbItem]).select();
+                if (!error && data) bookings.push(data[0]);
+            } else {
+                const { data, error } = await supabaseClient.from('reservations').update(dbItem).eq('id', editId).select();
+                if (!error && data) {
+                    const idx = bookings.findIndex(b => b.id == editId);
+                    if (idx !== -1) bookings[idx] = data[0];
+                }
+            }
+
+            document.getElementById('loading-indicator').classList.add('hidden');
             renderTable();
             renderRoomCalendar();
         }
 
-        function quickUpdateStatus(index, newStatus) {
+        async function quickUpdateStatus(id, newStatus) {
+            const index = bookings.findIndex(b => b.id == id);
             if (newStatus === 'Cancelled') {
                 let reason = prompt("Masukkan alasan pembatalan:", bookings[index].remark || "");
                 if (reason !== null) bookings[index].remark = "CANCELLED REASON: " + reason;
-                else return;
+                else { renderTable(); return; }
             }
             bookings[index].status = newStatus;
-            saveToStorage();
+            
+            await supabaseClient.from('reservations').update({ 
+                status: newStatus, 
+                remark: bookings[index].remark 
+            }).eq('id', id);
+
             renderTable();
         }
 
-        function editBooking(index) { openModal(index); }
+        function editBooking(id) { openModal(id); }
 
-        function copyBooking(index) {
-            const item = bookings[index];
-            const copiedItem = {
-                ...item,
-                groupName: item.groupName + " (Copy)",
-                beoMemo: 'BEO-2026-' + Math.floor(100 + Math.random() * 900),
-                status: "Tentative"
-            };
-            bookings.push(copiedItem);
-            saveToStorage();
+        async function copyBooking(id) {
+            document.getElementById('loading-indicator').classList.remove('hidden');
+            const item = bookings.find(b => b.id == id);
+            
+            const copiedItem = { ...item };
+            delete copiedItem.id; // Agar database buatkan ID baru
+            copiedItem.groupname = item.groupname + " (Copy)";
+            copiedItem.beomemo = 'BEO-2026-' + Math.floor(100 + Math.random() * 900);
+            copiedItem.status = "Tentative";
+
+            const { data, error } = await supabaseClient.from('reservations').insert([copiedItem]).select();
+            if (!error && data) {
+                bookings.push(data[0]);
+            }
+            document.getElementById('loading-indicator').classList.add('hidden');
             renderTable();
             renderRoomCalendar();
         }
 
-        function deleteBooking(index) {
+        async function deleteBooking(id) {
             if (confirm("Delete this banquet reservation?")) {
-                bookings.splice(index, 1);
-                saveToStorage();
+                document.getElementById('loading-indicator').classList.remove('hidden');
+                await supabaseClient.from('reservations').delete().eq('id', id);
+                bookings = bookings.filter(b => b.id != id);
+                document.getElementById('loading-indicator').classList.add('hidden');
                 renderTable();
                 renderRoomCalendar();
             }
         }
 
-        // ================= SISTEM CETAK PDF (PERSIS FILE DOCX) =================
-        function generatePDFDirect(index) {
-            const item = bookings[index];
-            const totalRev = item.bqtCover * item.price;
+        // ================= SISTEM CETAK PDF PROFESIONAL =================
+        function generatePDFDirect(id) {
+            const item = bookings.find(b => b.id == id);
+            const totalRev = item.bqtcover * item.price;
             
             // Format Data
-            const refNo = item.beoMemo;
+            const refNo = item.beomemo;
             const dateIssued = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'long', year: 'numeric'});
-            const toClient = item.picBooker.toUpperCase();
-            const groupSub = item.groupName;
-            const clientAddr = item.clientAddress || '-';
-            const dateEvent = formatDateID(item.dateTime);
+            const toClient = item.picbooker.toUpperCase();
+            const groupSub = item.groupname;
+            const clientAddr = item.clientaddress || '-';
+            const dateEvent = formatDateID(item.datetime);
             const venueEvent = item.venue.toUpperCase();
-            const pax = item.bqtCover;
-            const pkg = item.packageType + " (" + item.setUp + ")";
+            const pax = item.bqtcover;
+            const pkg = item.packagetype + " (" + item.setup + ")";
             const rate = formatIDR(item.price);
             const total = formatIDR(totalRev);
-            const salesName = item.salesPerson;
+            const salesName = item.salesperson;
 
-            // Generate HTML Format A4 Khusus Print 
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
                 <!DOCTYPE html>
@@ -1218,9 +1205,7 @@
                 <head>
                     <meta charset="UTF-8">
                     <title>Confirmation Letter - ${groupSub}</title>
-                    <link href="https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap" rel="stylesheet">
                     <style>
-                        /* CSS KHUSUS PRINT A4 */
                         body { 
                             font-family: Arial, sans-serif; 
                             background: white; 
@@ -1239,12 +1224,10 @@
                         
                         .container { max-width: 800px; margin: 0 auto; padding: 10px; }
                         
-                        /* Header Image mimicking the DOCX header */
                         .header-img { 
                             width: 100%; height: 200px; position: relative; overflow: hidden; 
                             background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200&auto=format&fit=crop'); 
                             background-size: cover; background-position: center; border: 1px solid #000;
-                            border-radius: 8px; /* Remove if needed strictly boxy */
                         }
                         .header-overlay {
                             position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px; 
@@ -1252,47 +1235,38 @@
                         }
                         .title-text { margin: 0; font-size: 28px; font-weight: bold; color: white; letter-spacing: 2px; }
                         
-                        /* Letter Header & Meta */
-                        .letter-title { font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; border-bottom: 2px solid #ccc; padding-bottom: 5px; margin-top: 25px; }
                         .meta-table { width: 100%; font-size: 11pt; margin-top: 15px; }
                         .meta-table td { padding: 3px 0; vertical-align: top; }
                         
                         .content-body { font-size: 11pt; margin-top: 20px; text-align: justify; }
                         .content-body h3 { font-size: 11pt; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; margin-top: 15px; }
                         
-                        /* Table Biaya */
                         .cost-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 10.5pt; }
                         .cost-table th, .cost-table td { border: 1px solid #000; padding: 6px 8px; text-align: left; }
                         .cost-table th { background-color: #f2f2f2; text-align: center; font-weight: bold; }
                         
-                        /* List styling */
                         ul { margin: 0 0 10px 20px; padding: 0; }
                         li { margin-bottom: 4px; }
                         
-                        /* Signatures */
                         .signature-area { display: flex; justify-content: space-between; margin-top: 40px; }
                         .signature-box { width: 40%; }
                         
-                        /* Footer */
                         .footer { margin-top: 50px; text-align: center; font-size: 9pt; font-weight: bold; color: #555; padding-top: 10px; border-top: 1px solid #ccc; }
                     </style>
                 </head>
                 <body>
                     <div class="container">
-                        <!-- Header Image -->
                         <div class="header-img">
                             <div class="header-overlay">
                                 <p class="title-text">CONFIRMATION LETTER</p>
                             </div>
                         </div>
 
-                        <!-- Ref & Date (Right Aligned in DOCX) -->
                         <div style="text-align: right; margin-top: 15px; font-size: 11pt;">
                             <p style="margin: 2px 0;"><b>Ref. No.</b> : ${refNo}</p>
                             <p style="margin: 2px 0;"><b>Date</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ${dateIssued}</p>
                         </div>
 
-                        <!-- To & Subject Table -->
                         <table class="meta-table">
                             <tr>
                                 <td style="width: 50px; color: #666; font-weight: bold; font-size: 10pt;">TO:</td>
@@ -1317,7 +1291,7 @@
                                 <tr><td>Venue</td><td>: <b>${venueEvent}</b></td></tr>
                                 <tr><td>Waktu</td><td>: 18.00 - 22.00 / By Arrangement</td></tr>
                                 <tr><td>Jumlah Pax</td><td>: <b>${pax} PAX</b></td></tr>
-                                <tr><td>Setup</td><td>: ${item.setUp.toUpperCase()}</td></tr>
+                                <tr><td>Setup</td><td>: ${item.setup.toUpperCase()}</td></tr>
                             </table>
 
                             <h3>ESTIMASI BIAYA</h3>
@@ -1349,7 +1323,6 @@
                             </table>
                         </div>
 
-                        <!-- PAGE BREAK HERE FOR PRINTING -->
                         <div class="page-break"></div>
 
                         <div class="content-body" style="margin-top: 0;">
@@ -1370,10 +1343,10 @@
                             <h3>CANCELLATION CONDITIONS</h3>
                             <ul>
                                 <li>Cancellation must be notified immediately to the hotel in writing.</li>
-                                <li>The first deposit is non-refundable or transferable (replaced with other facilities or activities).</li>
+                                <li>The first deposit is non-refundable or transferable.</li>
                                 <li>In case of cancellation within 1 week, 50% of the total payment will be charged.</li>
                                 <li>In case of cancellation less than 5 days, the Management reserves the right to charge 100%.</li>
-                                <li>The management of Platinum Balikpapan Hotel & Convention Hall reserves the right to cancel your space booking as long as payment has not been made by the time as stated in the Terms and Conditions, and reserves the right to award the space rental to another party who agrees to follow the hotel's payment rules.</li>
+                                <li>The management of Platinum Balikpapan Hotel & Convention Hall reserves the right to cancel your space booking as long as payment has not been made by the time as stated in the Terms and Conditions.</li>
                             </ul>
 
                             <h3>POSTPONEMENT RULES</h3>
@@ -1385,8 +1358,7 @@
                             This policy is set to avoid unwanted things.</p>
 
                             <h3>TOTAL GUARANTEE</h3>
-                            <p>Hotels must be informed, at least 72 hours prior to the event, of the exact total number of invitees. Thereafter, the Hotel reserves the right to confirm the exact number of guests at its sole discretion. The number of guests can be further increased by calculating the cost per person. If the actual number of guests is below or exceeds the minimum number agreed upon in the Confirmation Contract, the minimum fee will still be based on the guaranteed number of guests or if it exceeds the guaranteed number of meals calculated from the actual number of guests in attendance.<br>
-                            In the event, if the actual number of guests present exceeds the guaranteed number of guests, without prior confirmation with the Hotel, the Hotel will not be responsible if there is a shortage of food or drink during the event, if the Hotel agrees to provide additional food or drink and additional fees will apply.</p>
+                            <p>Hotels must be informed, at least 72 hours prior to the event, of the exact total number of invitees. Thereafter, the Hotel reserves the right to confirm the exact number of guests at its sole discretion.</p>
 
                             <h3>ETC</h3>
                             <ul>
@@ -1394,12 +1366,7 @@
                                 <li>Charge IDR 10,000/kwh.</li>
                                 <li>If the organizer requires additional time, an additional fee will be charged.</li>
                                 <li>If there are additional participants, there will be an additional fee according to the above costs.</li>
-                                <li>There are no materials that are installed by nailing, screwing or attached to walls, columns, floors or other parts of furniture, buildings or equipment. If this is done, the costs of damage will be borne by the client.</li>
-                                <li>Fights or attacks by guests from clients, it will be the responsibility of the client. If the hotel fails to monitor or control the situation, the hotel reserves the right to stop the event.</li>
-                                <li>For safety reasons, the hotel issued a strict prohibition against smoking during the event except in designated smoking areas. It is very important that all emergency exits are easily accessible at all times.</li>
-                                <li>Fire exits or access points to emergency exits shall not be used as storage areas for materials or packaging. Sound or lighting cables must be covered and that the entire area is free travel.</li>
-                                <li>The hotel will not be responsible for any damage to personal property or property belonging to the client or client's guests during the event in accordance with the contract or during the room being used by the client.</li>
-                                <li>Reservation is confirmation after we receive written confirmation and deposit. The hotel reserves the right to cancel the reservation if the deposit has not been received after the specified date. We will send a letter of approval/contract after there is agreement from both parties.</li>
+                                <li>There are no materials that are installed by nailing, screwing or attached to walls, columns, floors or other parts of furniture, buildings or equipment.</li>
                             </ul>
 
                             <br>
@@ -1424,7 +1391,6 @@
                             </div>
                         </div>
 
-                        <!-- Footer -->
                         <div class="footer">
                             Platinum Hotel & Convention Hall Balikpapan<br>
                             Jl. Soekarno - Hatta No 28, Balikpapan, 76126, East Kalimantan, Indonesia<br>
@@ -1432,12 +1398,7 @@
                         </div>
                     </div>
                     <script>
-                        // Print dialog automatically opens once rendered
-                        window.onload = function() {
-                            setTimeout(function() {
-                                window.print();
-                            }, 500);
-                        };
+                        window.onload = function() { setTimeout(function() { window.print(); }, 500); };
                     <\/script>
                 </body>
                 </html>
@@ -1451,17 +1412,12 @@
             XLSX.writeFile(wb, "Banquet_Management.xlsx");
         }
 
-        function printDashboardReport() {
-            window.print();
-        }
+        function printDashboardReport() { window.print(); }
+        function printManagementReport() { window.print(); }
 
-        function printManagementReport() {
-            window.print();
-        }
-
-        // Init
+        // MULAILAH MENARIK DATA DARI DATABASE SAAT HALAMAN DIBUKA
         populateVenues();
-        renderTable();
+        loadBookings();
     </script>
 </body>
 </html>
