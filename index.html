@@ -11,10 +11,10 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="logo.png">
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts (Playfair Display untuk kesan Hotel Mewah) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,6 +30,7 @@
                             700: '#1e3a5f',
                             800: '#0f1f38',
                             900: '#0a1525',
+                            950: '#060d18', /* Warna Hitam-Navy Mewah */
                         },
                         gold: {
                             400: '#d4af37',
@@ -77,25 +78,29 @@
 </head>
 <body class="bg-slate-50 text-navy-900 font-sans antialiased selection:bg-gold-500 selection:text-navy-900">
 
-    <!-- Top Header Elegance -->
-    <header class="sticky top-0 z-40 bg-gradient-to-r from-[#0a1525] via-[#101b33] to-[#0a1525] text-white shadow-xl print:hidden border-b border-gold-500/20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center gap-3 sm:gap-5">
+    <!-- Header Elegan Bintang 5 -->
+    <header class="sticky top-0 z-40 bg-navy-950 text-white shadow-2xl print:hidden border-b border-gold-500/30 relative overflow-hidden">
+        <!-- Efek Glow Latar -->
+        <div class="absolute inset-0 bg-gradient-to-r from-gold-500/5 via-transparent to-gold-500/5 pointer-events-none"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center gap-3 sm:gap-5 relative z-10">
             <!-- Logo Proporsional -->
-            <div class="bg-white py-1.5 px-2.5 sm:py-2 sm:px-3 rounded-lg shadow-md flex-shrink-0 flex items-center justify-center h-10 sm:h-12 w-auto">
+            <div class="bg-white py-1.5 px-2.5 sm:py-2 sm:px-3 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.15)] flex-shrink-0 flex items-center justify-center h-10 sm:h-12 md:h-14 w-auto">
                 <img src="logo.png" alt="Platinum Hotel Logo" class="h-full w-auto object-contain">
             </div>
             
             <div class="flex-1 min-w-0">
-                <h1 class="text-[11px] sm:text-base md:text-xl font-bold tracking-widest text-gold-400 uppercase font-serif truncate drop-shadow-md">
-                    Platinum Hotel & Convention Hall Balikpapan
+                <!-- Teks Diubah dan Font Disamakan dengan Logo -->
+                <h1 class="text-[11px] sm:text-sm md:text-[19px] font-bold tracking-[0.1em] text-gold-400 uppercase font-serif truncate drop-shadow-md">
+                    PLATINUM HOTEL & CONVENTION HALL BALIKPAPAN
                 </h1>
-                <p class="text-[9px] sm:text-xs text-slate-300 font-medium tracking-widest uppercase opacity-90 truncate mt-0.5 sm:mt-1">
+                <p class="text-[9px] sm:text-[11px] text-gray-400 font-medium tracking-[0.2em] uppercase opacity-80 truncate mt-0.5 sm:mt-1">
                     Banquet Reservation System
                 </p>
             </div>
         </div>
         
-        <nav class="bg-navy-900/50 backdrop-blur-md border-t border-white/5">
+        <nav class="bg-navy-900/40 backdrop-blur-md border-t border-white/5 relative z-10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-2.5 sm:py-3">
                     <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-semibold rounded-full bg-gold-500 text-navy-900 shadow-sm transition-all flex items-center gap-2">
@@ -148,8 +153,7 @@
                     <p class="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-chart-line text-blue-500"></i> Potential Rev</p>
                     <h3 id="kpi-potential-rev" class="text-sm sm:text-[15px] font-bold text-blue-600 mt-1.5">Rp 0</h3>
                 </div>
-                <!-- Kartu Elegance untuk Target -->
-                <div class="bg-gradient-to-br from-[#0a1525] to-[#1e3a5f] p-4 rounded-2xl shadow-lg text-white relative overflow-hidden group border border-gold-500/20">
+                <div class="bg-gradient-to-br from-navy-950 to-navy-800 p-4 rounded-2xl shadow-lg text-white relative overflow-hidden group border border-gold-500/20">
                     <div class="absolute -right-4 -top-4 w-16 h-16 bg-gold-500/10 rounded-full blur-2xl group-hover:scale-150 transition-all duration-500"></div>
                     <p class="text-[10px] sm:text-xs font-medium text-slate-300 uppercase tracking-wider">Variance vs Budget</p>
                     <h3 id="kpi-variance" class="text-sm sm:text-base font-bold mt-1.5 text-white">Rp 0</h3>
@@ -209,7 +213,7 @@
                 </button>
             </div>
 
-            <!-- Table Card -->
+            <!-- Table Card Dashboard -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="px-5 py-4 border-b border-slate-50 flex justify-between items-center bg-white">
                     <h2 class="font-bold text-navy-900 text-sm sm:text-base flex items-center gap-2"><i class="fa-solid fa-list-check text-gold-500"></i> Master Schedule</h2>
@@ -373,22 +377,24 @@
                     </div>
                 </div>
 
+                <!-- Tampilan Web (Report) Semua kolom dipisah -->
                 <div class="table-container pb-2 border border-slate-100 rounded-2xl">
-                    <table id="report-export-table" class="w-full text-left border-collapse text-sm whitespace-nowrap">
+                    <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
                         <thead>
                             <tr class="bg-slate-50 text-slate-600 uppercase text-[11px] tracking-wider border-b border-slate-200">
                                 <th class="py-3 px-4 font-semibold">Tanggal</th>
                                 <th class="py-3 px-4 font-semibold">Group / PIC</th>
-                                <th class="py-3 px-4 font-semibold">Venue / Set Up</th>
-                                <th class="py-3 px-4 font-semibold">Package</th>
-                                <!-- Kolom Cover, Revenue, Status, Sales Dipisah untuk Excel -->
-                                <th class="py-3 px-4 font-semibold text-right">Cover (Pax)</th>
+                                <th class="py-3 px-4 font-semibold">Venue</th>
+                                <th class="py-3 px-4 font-semibold">Package/Setup</th>
+                                <th class="py-3 px-4 font-semibold text-right">Cover</th>
                                 <th class="py-3 px-4 font-semibold text-right">Revenue</th>
                                 <th class="py-3 px-4 font-semibold text-center">Status</th>
                                 <th class="py-3 px-4 font-semibold">Sales</th>
+                                <th class="py-3 px-4 font-semibold">Remark</th>
                             </tr>
                         </thead>
                         <tbody id="report-table-body" class="divide-y divide-slate-50 text-slate-700">
+                            <!-- Diisi oleh JS -->
                         </tbody>
                     </table>
                 </div>
@@ -576,6 +582,7 @@
 
         let currentBudget = parseFloat(localStorage.getItem('banquet_budget')) || 5000000000;
         let bookings = []; 
+        let currentReportData = []; // Digunakan untuk Export Excel
 
         const allVenues = [
             "Convention Hall", "Convention 1", "Convention 2", "Convention 3",
@@ -923,6 +930,8 @@
             });
 
             let sortedFiltered = [...filtered].sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+            currentReportData = sortedFiltered; // Disimpan untuk Export Excel Raw
+            
             const tbody = document.getElementById('report-table-body');
             tbody.innerHTML = '';
 
@@ -933,22 +942,32 @@
                 if (item.status === 'Confirmed' || item.status === 'Finished') repConfirmedRev += rev;
                 else if (item.status === 'Tentative') repTentativeRev += rev;
 
-                // Teks murni untuk status agar diexport bagus ke Excel
-                const statusText = item.status;
+                let statusBadge = '';
+                if (item.status === 'Confirmed') statusBadge = '<span class="text-emerald-600 font-bold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">Confirmed</span>';
+                else if (item.status === 'Tentative') statusBadge = '<span class="text-amber-600 font-bold bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">Tentative</span>';
+                else if (item.status === 'Finished') statusBadge = '<span class="text-blue-600 font-bold bg-blue-50 border border-blue-200 px-2 py-0.5 rounded">Finished</span>';
+                else statusBadge = '<span class="text-rose-600 font-bold bg-rose-50 border border-rose-200 px-2 py-0.5 rounded">Cancelled</span>';
 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 border-b border-slate-100";
                 
-                // Kolom dipisah sempurna agar Export Excel rapi (Permintaan VVIP)
+                // Tampilan web tetap menggunakan Rp dan format rapi
                 tr.innerHTML = `
                     <td class="py-3 px-4 font-medium text-slate-600">${formatDateID(item.datetime)}</td>
-                    <td class="py-3 px-4 font-bold text-navy-900">${item.groupname} <span class="text-[10px] text-slate-500 font-normal block mt-0.5">${item.picbooker}</span></td>
-                    <td class="py-3 px-4 font-semibold text-navy-800">${item.venue} <span class="text-[10px] text-slate-500 font-normal block mt-0.5">${item.setup} Setup</span></td>
-                    <td class="py-3 px-4 font-medium">${item.packagetype}</td>
-                    <td class="py-3 px-4 text-right font-medium">${item.bqtcover}</td>
+                    <td class="py-3 px-4">
+                        <span class="font-bold text-navy-900 block">${item.groupname}</span>
+                        <span class="text-[10px] text-slate-500 font-normal block mt-0.5">PIC: ${item.picbooker}</span>
+                    </td>
+                    <td class="py-3 px-4 font-semibold text-navy-800">${item.venue}</td>
+                    <td class="py-3 px-4">
+                        <span class="font-medium text-slate-800 block">${item.packagetype}</span>
+                        <span class="text-[10px] text-slate-500 block mt-0.5">${item.setup} Setup</span>
+                    </td>
+                    <td class="py-3 px-4 text-right font-medium text-slate-700">${item.bqtcover} Pax</td>
                     <td class="py-3 px-4 text-right font-bold text-navy-900">${formatIDR(rev)}</td>
-                    <td class="py-3 px-4 text-center font-bold text-slate-700">${statusText}</td>
+                    <td class="py-3 px-4 text-center">${statusBadge}</td>
                     <td class="py-3 px-4 font-medium text-slate-600">${item.salesperson}</td>
+                    <td class="py-3 px-4 text-xs text-slate-500 max-w-[130px] truncate" title="${item.remark || '-'}">${item.remark || '-'}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -1423,10 +1442,36 @@
             printWindow.document.close();
         }
 
+        // FUNGSI EXPORT EXCEL KHUSUS (Angka Murni / Raw Numbers)
         function exportExcelReport() {
-            const table = document.getElementById('report-export-table');
-            const wb = XLSX.utils.table_to_book(table, {sheet: "Banquet Report"});
-            XLSX.writeFile(wb, "Banquet_Management.xlsx");
+            if (currentReportData.length === 0) {
+                alert("Tidak ada data untuk diexport. Pastikan tabel tidak kosong.");
+                return;
+            }
+
+            // Membuat format JSON khusus Excel agar angka tidak mengandung huruf (Rp / Pax)
+            const excelData = currentReportData.map(item => ({
+                "Tanggal": formatDateID(item.datetime),
+                "Group / Event": item.groupname,
+                "PIC / Booker": item.picbooker,
+                "Segment": item.segment,
+                "Venue": item.venue,
+                "Package": item.packagetype,
+                "Set Up": item.setup,
+                "Cover": parseInt(item.bqtcover),           // Angka murni
+                "Revenue": parseInt(item.bqtcover * item.price), // Angka murni (Bisa di SUM)
+                "Status": item.status,
+                "Sales Person": item.salesperson,
+                "Remark / Notes": item.remark || "-"
+            }));
+
+            // Menggunakan fungsi bawaan SheetJS untuk mengkonversi JSON ke Lembar Kerja Excel
+            const ws = XLSX.utils.json_to_sheet(excelData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Banquet Report");
+            
+            // Simpan File
+            XLSX.writeFile(wb, "Platinum_Banquet_Report.xlsx");
         }
 
         function printDashboardReport() { window.print(); }
