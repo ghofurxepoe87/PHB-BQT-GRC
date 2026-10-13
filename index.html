@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
     <title>Banquet System - Platinum Hotel & Convention Hall</title>
     
     <!-- Favicon & Apple Touch Icon -->
@@ -14,7 +14,7 @@
     <!-- Google Fonts (Playfair Display untuk kesan Hotel Mewah) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,7 +30,7 @@
                             700: '#1e3a5f',
                             800: '#0f1f38',
                             900: '#0a1525',
-                            950: '#060d18', /* Warna Hitam-Navy Mewah */
+                            950: '#060d18',
                         },
                         gold: {
                             400: '#d4af37',
@@ -46,13 +46,15 @@
             }
         }
     </script>
-    <!-- FontAwesome & SheetJS & Supabase JS -->
+    
+    <!-- FontAwesome, SheetJS, html2pdf (Untuk Download PDF), & Supabase -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; background-color: #f8fafc; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -76,31 +78,30 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-navy-900 font-sans antialiased selection:bg-gold-500 selection:text-navy-900">
+<body class="bg-slate-50 text-navy-900 font-sans antialiased selection:bg-gold-500 selection:text-white">
 
-    <!-- Header Elegan Bintang 5 -->
-    <header class="sticky top-0 z-40 bg-navy-950 text-white shadow-2xl print:hidden border-b border-gold-500/30 relative overflow-hidden">
-        <!-- Efek Glow Latar -->
-        <div class="absolute inset-0 bg-gradient-to-r from-gold-500/5 via-transparent to-gold-500/5 pointer-events-none"></div>
-        
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center gap-3 sm:gap-5 relative z-10">
-            <!-- Logo Proporsional -->
-            <div class="bg-white py-1.5 px-2.5 sm:py-2 sm:px-3 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.15)] flex-shrink-0 flex items-center justify-center h-10 sm:h-12 md:h-14 w-auto">
-                <img src="logo.png" alt="Platinum Hotel Logo" class="h-full w-auto object-contain">
+    <!-- Header Elegan Bintang 5 (Classic White & Navy) -->
+    <header class="sticky top-0 z-40 bg-white text-navy-900 shadow-md print:hidden border-b-[3px] border-gold-500 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 flex items-center gap-3 sm:gap-6">
+            
+            <!-- Logo Tanpa Kotak (Menyatu natural dengan background putih) -->
+            <div class="flex-shrink-0 flex items-center justify-center h-10 sm:h-14 md:h-16 w-auto">
+                <img src="logo.png" alt="Platinum Hotel Logo" class="h-full w-auto object-contain scale-110">
             </div>
             
-            <div class="flex-1 min-w-0">
-                <!-- Teks Diubah dan Font Disamakan dengan Logo -->
-                <h1 class="text-[11px] sm:text-sm md:text-[19px] font-bold tracking-[0.1em] text-gold-400 uppercase font-serif truncate drop-shadow-md">
+            <!-- Judul dengan Font Playfair Display Identik Logo -->
+            <div class="flex-1 min-w-0 flex flex-col justify-center">
+                <h1 style="font-family: 'Playfair Display', serif;" class="text-[11px] sm:text-sm md:text-[20px] font-black tracking-[0.05em] text-navy-900 uppercase truncate">
                     PLATINUM HOTEL & CONVENTION HALL BALIKPAPAN
                 </h1>
-                <p class="text-[9px] sm:text-[11px] text-gray-400 font-medium tracking-[0.2em] uppercase opacity-80 truncate mt-0.5 sm:mt-1">
+                <p class="text-[9px] sm:text-[11px] text-gold-600 font-bold tracking-[0.2em] uppercase truncate mt-0.5">
                     Banquet Reservation System
                 </p>
             </div>
         </div>
         
-        <nav class="bg-navy-900/40 backdrop-blur-md border-t border-white/5 relative z-10">
+        <!-- Navigasi Menu (Navy Bawah) -->
+        <nav class="bg-navy-900 shadow-inner">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-2.5 sm:py-3">
                     <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-semibold rounded-full bg-gold-500 text-navy-900 shadow-sm transition-all flex items-center gap-2">
@@ -116,7 +117,7 @@
                         <i class="fa-solid fa-file-lines"></i> Reports
                     </button>
                     
-                    <div class="h-5 w-px bg-white/10 mx-2 hidden sm:block flex-shrink-0"></div>
+                    <div class="h-5 w-px bg-white/20 mx-2 hidden sm:block flex-shrink-0"></div>
                     
                     <button onclick="openModal()" class="flex-shrink-0 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-5 py-2 rounded-full text-xs sm:text-sm shadow-md transition-all active:scale-95 flex items-center gap-2 border border-emerald-500/50">
                         <i class="fa-solid fa-plus"></i> New Booking
@@ -153,9 +154,10 @@
                     <p class="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-chart-line text-blue-500"></i> Potential Rev</p>
                     <h3 id="kpi-potential-rev" class="text-sm sm:text-[15px] font-bold text-blue-600 mt-1.5">Rp 0</h3>
                 </div>
-                <div class="bg-gradient-to-br from-navy-950 to-navy-800 p-4 rounded-2xl shadow-lg text-white relative overflow-hidden group border border-gold-500/20">
-                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-gold-500/10 rounded-full blur-2xl group-hover:scale-150 transition-all duration-500"></div>
-                    <p class="text-[10px] sm:text-xs font-medium text-slate-300 uppercase tracking-wider">Variance vs Budget</p>
+                <!-- Kartu Elegance untuk Target -->
+                <div class="bg-gradient-to-br from-navy-900 to-navy-800 p-4 rounded-2xl shadow-lg text-white relative overflow-hidden group border border-gold-500/30">
+                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-gold-500/20 rounded-full blur-2xl group-hover:scale-150 transition-all duration-500"></div>
+                    <p class="text-[10px] sm:text-xs font-medium text-gold-400 uppercase tracking-wider">Variance vs Budget</p>
                     <h3 id="kpi-variance" class="text-sm sm:text-base font-bold mt-1.5 text-white">Rp 0</h3>
                 </div>
 
@@ -208,9 +210,6 @@
                         </select>
                     </div>
                 </div>
-                <button onclick="printDashboardReport()" class="w-full lg:w-auto bg-slate-100 hover:bg-slate-200 text-navy-900 px-5 py-2.5 rounded-full text-sm font-semibold transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-print"></i> Print View
-                </button>
             </div>
 
             <!-- Table Card Dashboard -->
@@ -574,7 +573,7 @@
         const { createClient } = supabase;
         const supabaseUrl = 'https://hupvhnvztvzqbdhuukpt.supabase.co';
         
-        // Kunci API Anda dimasukkan di sini:
+        // Kunci API Anda
         const supabaseKey = 'sb_publishable_AvLLrrZ0-7F2_AXjC1LQhg_H_bolEmB'; 
         // ==========================================================
 
@@ -757,7 +756,7 @@
                     <td class="py-3.5 px-4 text-slate-600 font-medium">${item.salesperson}</td>
                     <td class="py-3.5 px-4 text-xs text-slate-500 max-w-[130px] truncate" title="${item.remark || '-'}">${item.remark || '-'}</td>
                     <td class="py-3.5 px-4 text-center whitespace-nowrap space-x-1">
-                        <button onclick="generatePDFDirect(${item.id})" class="bg-gold-500/20 text-gold-700 hover:bg-gold-500 hover:text-white w-8 h-8 rounded-lg transition-colors font-bold" title="Generate Confirmation Letter (PDF)"><i class="fa-solid fa-file-contract"></i></button>
+                        <button onclick="generatePDFDirect(${item.id})" class="bg-gold-500/20 text-gold-700 hover:bg-gold-500 hover:text-white w-8 h-8 rounded-lg transition-colors font-bold" title="Download Confirmation Letter (PDF)"><i class="fa-solid fa-file-pdf"></i></button>
                         <button onclick="copyBooking(${item.id})" class="bg-indigo-500/10 text-indigo-600 hover:bg-indigo-500 hover:text-white w-8 h-8 rounded-lg transition-colors font-medium" title="Copy Booking"><i class="fa-solid fa-copy"></i></button>
                         <button onclick="editBooking(${item.id})" class="bg-navy-900/10 text-navy-800 hover:bg-navy-800 hover:text-white w-8 h-8 rounded-lg transition-colors font-medium" title="Edit Booking"><i class="fa-solid fa-pen-to-square"></i></button>
                         <button onclick="deleteBooking(${item.id})" class="text-rose-500 hover:bg-rose-50 w-8 h-8 rounded-lg transition-colors" title="Delete"><i class="fa-solid fa-trash"></i></button>
@@ -942,30 +941,24 @@
                 if (item.status === 'Confirmed' || item.status === 'Finished') repConfirmedRev += rev;
                 else if (item.status === 'Tentative') repTentativeRev += rev;
 
-                let statusBadge = '';
-                if (item.status === 'Confirmed') statusBadge = '<span class="text-emerald-600 font-bold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">Confirmed</span>';
-                else if (item.status === 'Tentative') statusBadge = '<span class="text-amber-600 font-bold bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">Tentative</span>';
-                else if (item.status === 'Finished') statusBadge = '<span class="text-blue-600 font-bold bg-blue-50 border border-blue-200 px-2 py-0.5 rounded">Finished</span>';
-                else statusBadge = '<span class="text-rose-600 font-bold bg-rose-50 border border-rose-200 px-2 py-0.5 rounded">Cancelled</span>';
+                // Teks murni untuk status agar diexport bagus ke Excel
+                const statusText = item.status;
 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 border-b border-slate-100";
                 
-                // Tampilan web tetap menggunakan Rp dan format rapi
+                // Kolom dipisah sempurna agar Export Excel rapi (Permintaan VVIP)
                 tr.innerHTML = `
                     <td class="py-3 px-4 font-medium text-slate-600">${formatDateID(item.datetime)}</td>
                     <td class="py-3 px-4">
                         <span class="font-bold text-navy-900 block">${item.groupname}</span>
                         <span class="text-[10px] text-slate-500 font-normal block mt-0.5">PIC: ${item.picbooker}</span>
                     </td>
-                    <td class="py-3 px-4 font-semibold text-navy-800">${item.venue}</td>
-                    <td class="py-3 px-4">
-                        <span class="font-medium text-slate-800 block">${item.packagetype}</span>
-                        <span class="text-[10px] text-slate-500 block mt-0.5">${item.setup} Setup</span>
-                    </td>
-                    <td class="py-3 px-4 text-right font-medium text-slate-700">${item.bqtcover} Pax</td>
+                    <td class="py-3 px-4 font-semibold text-navy-800">${item.venue} <span class="text-[10px] text-slate-500 font-normal block mt-0.5">${item.setup} Setup</span></td>
+                    <td class="py-3 px-4 font-medium">${item.packagetype}</td>
+                    <td class="py-3 px-4 text-right font-medium">${item.bqtcover}</td>
                     <td class="py-3 px-4 text-right font-bold text-navy-900">${formatIDR(rev)}</td>
-                    <td class="py-3 px-4 text-center">${statusBadge}</td>
+                    <td class="py-3 px-4 text-center font-bold text-slate-700">${statusText}</td>
                     <td class="py-3 px-4 font-medium text-slate-600">${item.salesperson}</td>
                     <td class="py-3 px-4 text-xs text-slate-500 max-w-[130px] truncate" title="${item.remark || '-'}">${item.remark || '-'}</td>
                 `;
@@ -1216,8 +1209,10 @@
             }
         }
 
-        // ================= SISTEM CETAK PDF PROFESIONAL =================
+        // ================= SISTEM GENERATE & DOWNLOAD PDF LANGSUNG =================
         function generatePDFDirect(id) {
+            document.getElementById('loading-indicator').classList.remove('hidden');
+            
             const item = bookings.find(b => b.id == id);
             const totalRev = item.bqtcover * item.price;
             
@@ -1234,192 +1229,130 @@
             const total = formatIDR(totalRev);
             const salesName = item.salesperson;
 
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Confirmation Letter - ${groupSub}</title>
-                    <style>
-                        body { 
-                            font-family: Arial, sans-serif; 
-                            background: white; 
-                            color: #000; 
-                            margin: 0;
-                            -webkit-print-color-adjust: exact !important; 
-                            print-color-adjust: exact !important;
-                            line-height: 1.4;
-                        }
-                        
-                        @media print {
-                            @page { size: A4 portrait; margin: 15mm 20mm; }
-                            html, body { background: white !important; }
-                            .page-break { page-break-before: always; }
-                        }
-                        
-                        .container { max-width: 800px; margin: 0 auto; padding: 10px; }
-                        
-                        .header-img { 
-                            width: 100%; height: 200px; position: relative; overflow: hidden; 
-                            background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200&auto=format&fit=crop'); 
-                            background-size: cover; background-position: center; border: 1px solid #000;
-                        }
-                        .header-overlay {
-                            position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px; 
-                            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-                        }
-                        .title-text { margin: 0; font-size: 28px; font-weight: bold; color: white; letter-spacing: 2px; }
-                        
-                        .meta-table { width: 100%; font-size: 11pt; margin-top: 15px; }
-                        .meta-table td { padding: 3px 0; vertical-align: top; }
-                        
-                        .content-body { font-size: 11pt; margin-top: 20px; text-align: justify; }
-                        .content-body h3 { font-size: 11pt; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; margin-top: 15px; }
-                        
-                        .cost-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 10.5pt; }
-                        .cost-table th, .cost-table td { border: 1px solid #000; padding: 6px 8px; text-align: left; }
-                        .cost-table th { background-color: #f2f2f2; text-align: center; font-weight: bold; }
-                        
-                        ul { margin: 0 0 10px 20px; padding: 0; }
-                        li { margin-bottom: 4px; }
-                        
-                        .signature-area { display: flex; justify-content: space-between; margin-top: 40px; }
-                        .signature-box { width: 40%; }
-                        
-                        .footer { margin-top: 50px; text-align: center; font-size: 9pt; font-weight: bold; color: #555; padding-top: 10px; border-top: 1px solid #ccc; }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <div class="header-img">
-                            <div class="header-overlay">
-                                <p class="title-text">CONFIRMATION LETTER</p>
-                            </div>
+            // Membuat wadah tersembunyi untuk HTML yang akan diconvert ke PDF
+            const container = document.createElement('div');
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.top = '-9999px';
+            
+            container.innerHTML = `
+                <div id="pdf-content-${id}" style="padding: 20px; font-family: Arial, sans-serif; background: white; color: #000; width: 800px; box-sizing: border-box;">
+                    
+                    <!-- Header Elegan untuk PDF -->
+                    <div style="width: 100%; height: 160px; background-color: #060d18; color: white; position: relative; border-bottom: 4px solid #d4af37;">
+                        <div style="position: absolute; bottom: 20px; left: 20px;">
+                            <p style="margin: 0; font-size: 26px; font-weight: bold; letter-spacing: 2px; font-family: 'Playfair Display', serif; color: #d4af37;">CONFIRMATION LETTER</p>
+                            <p style="margin: 5px 0 0 0; font-size: 14px; letter-spacing: 1px; font-family: 'Playfair Display', serif;">PLATINUM HOTEL & CONVENTION HALL BALIKPAPAN</p>
                         </div>
+                    </div>
 
-                        <div style="text-align: right; margin-top: 15px; font-size: 11pt;">
-                            <p style="margin: 2px 0;"><b>Ref. No.</b> : ${refNo}</p>
-                            <p style="margin: 2px 0;"><b>Date</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ${dateIssued}</p>
-                        </div>
+                    <div style="text-align: right; margin-top: 20px; font-size: 11pt;">
+                        <p style="margin: 3px 0;"><b>Ref. No.</b> : ${refNo}</p>
+                        <p style="margin: 3px 0;"><b>Date</b> : ${dateIssued}</p>
+                    </div>
 
-                        <table class="meta-table">
-                            <tr>
-                                <td style="width: 50px; color: #666; font-weight: bold; font-size: 10pt;">TO:</td>
-                                <td style="width: 50%;">
-                                    <b style="font-size: 12pt;">${toClient}</b><br>
-                                    ${groupSub}<br>
-                                    <span style="font-size: 10pt; color: #555;">${clientAddr}</span>
-                                </td>
-                                <td style="width: 70px; color: #666; font-weight: bold; font-size: 10pt;">SUBJECT:</td>
-                                <td><b>Banquet Arrangement</b></td>
-                            </tr>
+                    <table style="width: 100%; font-size: 11pt; margin-top: 20px;">
+                        <tr>
+                            <td style="width: 50px; color: #666; font-weight: bold;">TO:</td>
+                            <td style="width: 50%;">
+                                <b style="font-size: 12pt;">${toClient}</b><br>
+                                ${groupSub}<br>
+                                <span style="font-size: 10pt; color: #555;">${clientAddr}</span>
+                            </td>
+                            <td style="width: 80px; color: #666; font-weight: bold;">SUBJECT:</td>
+                            <td><b>Banquet Arrangement</b></td>
+                        </tr>
+                    </table>
+
+                    <div style="font-size: 11pt; margin-top: 25px; line-height: 1.5;">
+                        <p>Dear Mr/Mrs. <b>${toClient}</b>,</p>
+                        <p><b>Warmest Greeting from Platinum Hotel & Convention Hall Balikpapan</b></p>
+                        <p>We would like to thank you for your kind interest toward our property. Further to your inquiry, we would be delighted to send the following proposal for your kind perusal.</p>
+                        
+                        <h3 style="font-size: 11pt; font-weight: bold; margin-top: 20px;">BANQUET ARRANGEMENT :</h3>
+                        <table style="width: 80%; margin-left: 15px; font-size: 11pt; line-height: 1.5;">
+                            <tr><td style="width: 120px;">Tanggal</td><td>: <b>${dateEvent}</b></td></tr>
+                            <tr><td>Venue</td><td>: <b>${venueEvent}</b></td></tr>
+                            <tr><td>Waktu</td><td>: 18.00 - 22.00 / By Arrangement</td></tr>
+                            <tr><td>Jumlah Pax</td><td>: <b>${pax} PAX</b></td></tr>
+                            <tr><td>Setup</td><td>: ${item.setup.toUpperCase()}</td></tr>
                         </table>
 
-                        <div class="content-body">
-                            <p>Dear Mr/Mrs. <b>${toClient}</b>,</p>
-                            <p><b>Warmest Greeting from Platinum Hotel & Convention Hall Balikpapan</b></p>
-                            <p>We would like to thank you for your kind interest toward our property. Further to your inquiry, we would be delighted to send the following proposal for your kind perusal.</p>
-                            
-                            <h3>BANQUET ARRANGEMENT :</h3>
-                            <table style="width: 80%; margin-left: 15px; font-size: 11pt;">
-                                <tr><td style="width: 120px;">Tanggal</td><td>: <b>${dateEvent}</b></td></tr>
-                                <tr><td>Venue</td><td>: <b>${venueEvent}</b></td></tr>
-                                <tr><td>Waktu</td><td>: 18.00 - 22.00 / By Arrangement</td></tr>
-                                <tr><td>Jumlah Pax</td><td>: <b>${pax} PAX</b></td></tr>
-                                <tr><td>Setup</td><td>: ${item.setup.toUpperCase()}</td></tr>
-                            </table>
+                        <h3 style="font-size: 11pt; font-weight: bold; margin-top: 20px;">ESTIMASI BIAYA</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 10.5pt;">
+                            <thead>
+                                <tr>
+                                    <th style="border: 1px solid #000; padding: 8px; background-color: #f2f2f2;">Date</th>
+                                    <th style="border: 1px solid #000; padding: 8px; background-color: #f2f2f2;">Arrangement</th>
+                                    <th style="border: 1px solid #000; padding: 8px; background-color: #f2f2f2;">No of pax</th>
+                                    <th style="border: 1px solid #000; padding: 8px; background-color: #f2f2f2;">No of day</th>
+                                    <th style="border: 1px solid #000; padding: 8px; background-color: #f2f2f2;">Rate</th>
+                                    <th style="border: 1px solid #000; padding: 8px; background-color: #f2f2f2;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${dateEvent}</td>
+                                    <td style="border: 1px solid #000; padding: 8px;">${pkg}</td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${pax} PAX</td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">1</td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: right;">${rate}</td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: right;">${total}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="border: 1px solid #000; padding: 8px; text-align: right; font-weight: bold;">Total</td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: right; font-weight: bold;">IDR ${total}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pemisah Halaman (Page Break untuk PDF) -->
+                    <div class="html2pdf__page-break"></div>
 
-                            <h3>ESTIMASI BIAYA</h3>
-                            <table class="cost-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Arrangement</th>
-                                        <th>No of pax</th>
-                                        <th>No of day</th>
-                                        <th>Rate</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="text-align: center;">${dateEvent}</td>
-                                        <td>${pkg}</td>
-                                        <td style="text-align: center;">${pax} PAX</td>
-                                        <td style="text-align: center;">1</td>
-                                        <td style="text-align: right;">${rate}</td>
-                                        <td style="text-align: right;">${total}</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="5" style="text-align: right; font-weight: bold;">Total</td>
-                                        <td style="text-align: right; font-weight: bold;">IDR ${total}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div style="font-size: 11pt; line-height: 1.5; padding-top: 20px;">
+                        <h3 style="font-size: 11pt; font-weight: bold;">PAYMENT METHOD</h3>
+                        <ul style="margin-left: 20px;">
+                            <li>Reservations will be confirmed upon receipt of guest sign confirmation and down payment.</li>
+                            <li>A deposit of min.50% must be completed 2 weeks before the event / arrival and repayment 7 days before the event / arrival.</li>
+                            <li>All costs incurred outside the estimated cost must be settled at the time of the event, in cash or credit card.</li>
+                            <li>Payment can be made by Cash, Credit Card or transfer to:<br>
+                                Account Name: PT MIL Platinum Bersaudara<br>
+                                *Bank Name: BCA KCU Balikpapan<br>
+                                Account No: 191 2393 288<br>
+                                *Bank Name: Mandiri KCU Balikpapan<br>
+                                Account No: 1490 0780 8888 9
+                            </li>
+                        </ul>
 
-                        <div class="page-break"></div>
+                        <h3 style="font-size: 11pt; font-weight: bold; margin-top: 15px;">CANCELLATION CONDITIONS</h3>
+                        <ul style="margin-left: 20px;">
+                            <li>Cancellation must be notified immediately to the hotel in writing.</li>
+                            <li>The first deposit is non-refundable or transferable.</li>
+                            <li>In case of cancellation within 1 week, 50% of the total payment will be charged.</li>
+                            <li>In case of cancellation less than 5 days, the Management reserves the right to charge 100%.</li>
+                        </ul>
 
-                        <div class="content-body" style="margin-top: 0;">
-                            <h3>PAYMENT METHOD</h3>
-                            <ul>
-                                <li>Reservations will be confirmed upon receipt of guest sign confirmation and down payment.</li>
-                                <li>A deposit of min.50% must be completed 2 weeks before the event / arrival and repayment 7 days before the event / arrival.</li>
-                                <li>All costs incurred outside the estimated cost must be settled at the time of the event, in cash or credit card.</li>
-                                <li>Payment can be made by Cash, Credit Card or transfer to:<br>
-                                    Account Name: PT MIL Platinum Bersaudara<br>
-                                    *Bank Name: BCA KCU Balikpapan<br>
-                                    Account No: 191 2393 288<br>
-                                    *Bank Name: Mandiri KCU Balikpapan<br>
-                                    Account No: 1490 0780 8888 9
-                                </li>
-                            </ul>
+                        <h3 style="font-size: 11pt; font-weight: bold; margin-top: 15px;">POSTPONEMENT RULES</h3>
+                        <p>In the event of unforeseen events (such as riots, natural disasters) you may postpone the event by informing the hotel at least 72 hours prior to the “D” day in writing and free of charge. The event can be rescheduled within 2 months at the latest.</p>
 
-                            <h3>CANCELLATION CONDITIONS</h3>
-                            <ul>
-                                <li>Cancellation must be notified immediately to the hotel in writing.</li>
-                                <li>The first deposit is non-refundable or transferable.</li>
-                                <li>In case of cancellation within 1 week, 50% of the total payment will be charged.</li>
-                                <li>In case of cancellation less than 5 days, the Management reserves the right to charge 100%.</li>
-                                <li>The management of Platinum Balikpapan Hotel & Convention Hall reserves the right to cancel your space booking as long as payment has not been made by the time as stated in the Terms and Conditions.</li>
-                            </ul>
+                        <h3 style="font-size: 11pt; font-weight: bold; margin-top: 15px;">OUTSIDE FOOD & BEVERAGES</h3>
+                        <p>Drinks brought in from outside will be charged at 50% of the hotel price. The Hotel does not allow outside food.</p>
 
-                            <h3>POSTPONEMENT RULES</h3>
-                            <p>In the event of unforeseen events (such as riots, natural disasters) you may postpone the event by informing the hotel at least 72 hours prior to the “D” day in writing and free of charge. The event can be rescheduled within 2 months at the latest.</p>
+                        <br>
+                        <p>We hope the above offer suits your needs and we are waiting for further confirmation.</p>
+                        <p>Thank you for choosing Platinum hotel Balikpapan. If you require further information, please do not hesitate to contact us at 0542-8830228.</p>
+                        
+                        <p style="text-align: center; font-weight: bold; font-style: italic; margin-top: 30px; font-size: 12pt; font-family: 'Playfair Display', serif; color: #d4af37;">“LUXURY EXPERIENCE DESTINATION”</p>
 
-                            <h3>OUTSIDE FOOD & BEVERAGES</h3>
-                            <p>Drinks brought in from outside will be charged at 50% of the hotel price (unless previously agreed).<br>
-                            The Hotel does not allow outside food. Food provided by the Hotel cannot be taken out of the Hotel area.<br>
-                            This policy is set to avoid unwanted things.</p>
-
-                            <h3>TOTAL GUARANTEE</h3>
-                            <p>Hotels must be informed, at least 72 hours prior to the event, of the exact total number of invitees. Thereafter, the Hotel reserves the right to confirm the exact number of guests at its sole discretion.</p>
-
-                            <h3>ETC</h3>
-                            <ul>
-                                <li>5000 watts of electricity is included, if there is additional food, it will be charged.</li>
-                                <li>Charge IDR 10,000/kwh.</li>
-                                <li>If the organizer requires additional time, an additional fee will be charged.</li>
-                                <li>If there are additional participants, there will be an additional fee according to the above costs.</li>
-                                <li>There are no materials that are installed by nailing, screwing or attached to walls, columns, floors or other parts of furniture, buildings or equipment.</li>
-                            </ul>
-
-                            <br>
-                            <p>We hope the above offer suits your needs and we are waiting for further confirmation.</p>
-                            <p>Thank you for choosing Platinum hotel Balikpapan. If you require further information, please do not hesitate to contact us at 0542-8830228.</p>
-                            
-                            <p style="text-align: center; font-weight: bold; font-style: italic; margin-top: 20px; font-size: 12pt;">“LUXURY EXPERIENCE DESTINATION”</p>
-                        </div>
-
-                        <div class="signature-area">
-                            <div class="signature-box">
+                        <div style="display: flex; justify-content: space-between; margin-top: 40px;">
+                            <div style="width: 40%;">
                                 <p style="margin:0;">Regards,</p>
                                 <br><br><br><br>
                                 <p style="margin:0; font-weight:bold; text-decoration: underline;">${salesName}</p>
                                 <p style="margin:0; font-size:10pt;">Account Manager</p>
                             </div>
-                            <div class="signature-box">
+                            <div style="width: 40%;">
                                 <p style="margin:0;">Approved by,</p>
                                 <br><br><br><br>
                                 <p style="margin:0; font-weight:bold; text-decoration: underline;">${toClient}</p>
@@ -1427,19 +1360,32 @@
                             </div>
                         </div>
 
-                        <div class="footer">
+                        <div style="margin-top: 50px; text-align: center; font-size: 9pt; font-weight: bold; color: #555; padding-top: 10px; border-top: 1px solid #ccc;">
                             Platinum Hotel & Convention Hall Balikpapan<br>
                             Jl. Soekarno - Hatta No 28, Balikpapan, 76126, East Kalimantan, Indonesia<br>
                             WWW.PLATINUMHOTELINDONESIA.COM
                         </div>
                     </div>
-                    <script>
-                        window.onload = function() { setTimeout(function() { window.print(); }, 500); };
-                    <\/script>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
+                </div>
+            `;
+            document.body.appendChild(container);
+
+            const element = document.getElementById('pdf-content-' + id);
+            
+            // Konfigurasi html2pdf untuk mendownload PDF
+            const opt = {
+                margin:       [10, 10, 10, 10], // Margin atas, kiri, bawah, kanan (mm)
+                filename:     'Confirmation_Letter_' + item.groupname.replace(/\s+/g, '_') + '.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Trigger Download
+            html2pdf().set(opt).from(element).save().then(() => {
+                document.body.removeChild(container);
+                document.getElementById('loading-indicator').classList.add('hidden');
+            });
         }
 
         // FUNGSI EXPORT EXCEL KHUSUS (Angka Murni / Raw Numbers)
