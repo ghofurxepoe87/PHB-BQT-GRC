@@ -7,11 +7,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="white">
     <title>Banquet System - Platinum Hotel & Convention Hall</title>
     
-    <!-- Favicon & Apple Touch Icon -->
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="logo.png">
     
-    <!-- Google Fonts -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -91,20 +91,20 @@
         </div>
     </div>
 
-    <!-- Header Elegan Proporsional -->
-    <header id="main-header" class="sticky top-0 z-40 bg-white text-navy-900 shadow-md print:hidden border-b-[3px] border-gold-500 relative hidden">
+    <!-- ================= HEADER ELEGAN BINTANG 5 ================= -->
+    <header id="main-header" class="sticky top-0 z-40 bg-white text-navy-900 shadow-sm print:hidden border-b border-slate-200 relative hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between gap-3 sm:gap-6">
             
-            <!-- Logo Utama Saja (Teks Platinum Dihapus agar Proporsional) -->
-            <div class="flex items-center gap-3 sm:gap-5 overflow-hidden">
-                <div class="flex-shrink-0 flex items-center justify-start h-10 sm:h-14 md:h-16 w-auto">
+            <!-- Logo & Title Area Proporsional -->
+            <div class="flex items-center gap-3 sm:gap-4 overflow-hidden">
+                <div class="flex-shrink-0 flex items-center justify-start h-10 sm:h-12 md:h-14 w-auto">
                     <img src="logo.png" alt="Platinum Hotel Logo" class="h-full w-auto object-contain">
                 </div>
                 <div class="flex flex-col justify-center border-l-2 border-slate-200 pl-3 sm:pl-4">
-                    <h1 style="font-family: 'Playfair Display', serif;" class="text-[12px] sm:text-sm md:text-[18px] font-black tracking-[0.05em] text-navy-900 uppercase">
+                    <h1 style="font-family: 'Playfair Display', serif;" class="text-[13px] sm:text-sm md:text-[18px] font-black tracking-[0.05em] text-navy-900 uppercase leading-none">
                         BANQUET RESERVATION
                     </h1>
-                    <p class="text-[9px] sm:text-[11px] text-gold-600 font-bold tracking-[0.2em] uppercase mt-0.5">
+                    <p class="text-[10px] sm:text-[11px] text-gold-500 font-bold tracking-[0.15em] uppercase mt-1 leading-none">
                         SYSTEM
                     </p>
                 </div>
@@ -122,6 +122,7 @@
             </div>
         </div>
         
+        <!-- Navigasi Menu -->
         <nav class="bg-navy-900 shadow-inner">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-2.5 sm:py-3">
@@ -155,7 +156,6 @@
 
     <main id="main-content" class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 hidden">
         
-        <!-- Loading Data Global -->
         <div id="loading-indicator" class="text-center py-4 hidden">
             <i class="fa-solid fa-circle-notch fa-spin text-gold-500 text-2xl"></i>
             <p class="text-xs text-slate-500 mt-2 font-medium">Memproses Data...</p>
@@ -1260,7 +1260,7 @@
             }
         }
 
-        // ================= SISTEM GENERATE & DOWNLOAD PDF LANGSUNG (KOP SURAT RESMI) =================
+        // ================= SISTEM GENERATE PDF (TANPA TERPOTONG) =================
         function generatePDFDirect(id) {
             document.getElementById('loading-indicator').classList.remove('hidden');
             const item = bookings.find(b => b.id == id);
@@ -1280,11 +1280,14 @@
             const salesName = item.salesperson;
 
             const container = document.createElement('div');
-            container.style.position = 'absolute'; container.style.left = '-9999px'; container.style.top = '-9999px';
+            // Element ini diposisikan dengan cara aman agar tidak mengganggu scroll Y browser
+            container.style.position = 'absolute';
+            container.style.left = '0';
+            container.style.top = '0';
+            container.style.zIndex = '-9999';
             
-            // KOP SURAT PROFESIONAL SATU HALAMAN (MENCEGAH TERPOTONG)
             container.innerHTML = `
-                <div id="pdf-content-${id}" style="font-family: 'Poppins', sans-serif; background: white; color: #000; font-size: 10pt;">
+                <div id="pdf-content-${id}" style="font-family: 'Poppins', sans-serif; background: white; color: #000; width: 800px; padding: 20px;">
                     
                     <!-- HEADER KOP SURAT (DIBUAT MENGGUNAKAN TABLE AGAR SEMPURNA) -->
                     <table style="width: 100%; border-bottom: 2px solid #d4af37; padding-bottom: 10px; margin-bottom: 20px;">
@@ -1361,46 +1364,51 @@
                         </tbody>
                     </table>
                     
-                    <!-- INFO TAMBAHAN -->
-                    <h3 style="font-size: 10pt; font-weight: bold; color: #000; margin-bottom: 8px;">PAYMENT METHOD</h3>
-                    <ul style="margin-top: 0; margin-left: 15px; padding-left: 10px; line-height: 1.5; font-size: 9pt;">
-                        <li>Reservations will be confirmed upon receipt of guest sign confirmation and down payment.</li>
-                        <li>A deposit of min.50% must be completed 2 weeks before the event / arrival and repayment 7 days before the event / arrival.</li>
-                        <li>Payment can be made by Cash, Credit Card or transfer to:<br>
-                            Account Name: PT MIL Platinum Bersaudara<br>
-                            <b>BCA KCU Balikpapan</b>: 191 2393 288<br>
-                            <b>Mandiri KCU Balikpapan</b>: 1490 0780 8888 9
-                        </li>
-                    </ul>
+                    <!-- PEMISAH HALAMAN PDF -->
+                    <div class="html2pdf__page-break"></div>
 
-                    <h3 style="font-size: 10pt; font-weight: bold; margin-top: 15px; margin-bottom: 8px; color: #000;">CANCELLATION & POSTPONEMENT</h3>
-                    <ul style="margin-top: 0; margin-left: 15px; padding-left: 10px; line-height: 1.5; font-size: 9pt;">
-                        <li>Cancellation must be notified immediately to the hotel in writing. First deposit is non-refundable.</li>
-                        <li>Cancellation within 1 week will be charged 50%. Less than 5 days will be charged 100%.</li>
-                        <li>Postponement allowed min 72 hours prior to the event free of charge (rescheduled within max 2 months).</li>
-                    </ul>
+                    <!-- HALAMAN 2: TERMS AND CONDITIONS -->
+                    <div style="font-size: 9.5pt; line-height: 1.6; padding-top: 20px; color: #333; text-align: justify;">
+                        <h3 style="font-size: 10pt; font-weight: bold; color: #000;">PAYMENT METHOD</h3>
+                        <ul style="margin-top: 0; margin-left: 15px; padding-left: 10px; line-height: 1.5; font-size: 9pt;">
+                            <li>Reservations will be confirmed upon receipt of guest sign confirmation and down payment.</li>
+                            <li>A deposit of min.50% must be completed 2 weeks before the event / arrival and repayment 7 days before the event / arrival.</li>
+                            <li>Payment can be made by Cash, Credit Card or transfer to:<br>
+                                Account Name: PT MIL Platinum Bersaudara<br>
+                                <b>BCA KCU Balikpapan</b>: 191 2393 288<br>
+                                <b>Mandiri KCU Balikpapan</b>: 1490 0780 8888 9
+                            </li>
+                        </ul>
 
-                    <h3 style="font-size: 10pt; font-weight: bold; margin-top: 15px; margin-bottom: 8px; color: #000;">ETC</h3>
-                    <p style="margin-top: 0; line-height: 1.5; font-size: 9pt;">Drinks brought in from outside will be charged at 50% of the hotel price. The Hotel does not allow outside food. 5000 watts of electricity is included, Charge IDR 10,000/kwh for additional.</p>
+                        <h3 style="font-size: 10pt; font-weight: bold; margin-top: 15px; margin-bottom: 8px; color: #000;">CANCELLATION & POSTPONEMENT</h3>
+                        <ul style="margin-top: 0; margin-left: 15px; padding-left: 10px; line-height: 1.5; font-size: 9pt;">
+                            <li>Cancellation must be notified immediately to the hotel in writing. First deposit is non-refundable.</li>
+                            <li>Cancellation within 1 week will be charged 50%. Less than 5 days will be charged 100%.</li>
+                            <li>Postponement allowed min 72 hours prior to the event free of charge (rescheduled within max 2 months).</li>
+                        </ul>
 
-                    <p style="text-align: center; font-weight: bold; font-style: italic; margin-top: 30px; font-size: 11pt; font-family: 'Playfair Display', serif; color: #c5a059;">“LUXURY EXPERIENCE DESTINATION”</p>
+                        <h3 style="font-size: 10pt; font-weight: bold; margin-top: 15px; margin-bottom: 8px; color: #000;">ETC</h3>
+                        <p style="margin-top: 0; line-height: 1.5; font-size: 9pt;">Drinks brought in from outside will be charged at 50% of the hotel price. The Hotel does not allow outside food. 5000 watts of electricity is included, Charge IDR 10,000/kwh for additional.</p>
 
-                    <table style="width: 100%; margin-top: 40px; text-align: center;">
-                        <tr>
-                            <td style="width: 50%;">
-                                <p style="margin:0; color: #555;">Regards,</p>
-                                <br><br><br><br>
-                                <p style="margin:0; font-weight:bold; color: #000; text-decoration: underline;">${salesName}</p>
-                                <p style="margin:2px 0 0 0; font-size:9pt; color: #666;">Account Manager</p>
-                            </td>
-                            <td style="width: 50%;">
-                                <p style="margin:0; color: #555;">Approved by,</p>
-                                <br><br><br><br>
-                                <p style="margin:0; font-weight:bold; color: #000; text-decoration: underline;">${toClient}</p>
-                                <p style="margin:2px 0 0 0; font-size:9pt; color: #666;">Authorized Signature & Stamp</p>
-                            </td>
-                        </tr>
-                    </table>
+                        <p style="text-align: center; font-weight: bold; font-style: italic; margin-top: 30px; font-size: 11pt; font-family: 'Playfair Display', serif; color: #c5a059;">“LUXURY EXPERIENCE DESTINATION”</p>
+
+                        <table style="width: 100%; margin-top: 40px; text-align: center;">
+                            <tr>
+                                <td style="width: 50%;">
+                                    <p style="margin:0; color: #555;">Regards,</p>
+                                    <br><br><br><br>
+                                    <p style="margin:0; font-weight:bold; color: #000; text-decoration: underline;">${salesName}</p>
+                                    <p style="margin:2px 0 0 0; font-size:9pt; color: #666;">Account Manager</p>
+                                </td>
+                                <td style="width: 50%;">
+                                    <p style="margin:0; color: #555;">Approved by,</p>
+                                    <br><br><br><br>
+                                    <p style="margin:0; font-weight:bold; color: #000; text-decoration: underline;">${toClient}</p>
+                                    <p style="margin:2px 0 0 0; font-size:9pt; color: #666;">Authorized Signature & Stamp</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             `;
             document.body.appendChild(container);
@@ -1412,9 +1420,12 @@
                 margin:       15, // Margin 15mm di semua sisi
                 filename:     'CL_' + item.groupname.replace(/\s+/g, '_') + '.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
+                html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
+
+            // Mencegah scroll bug
+            window.scrollTo(0,0);
 
             html2pdf().set(opt).from(element).save().then(() => {
                 document.body.removeChild(container);
