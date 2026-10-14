@@ -188,7 +188,7 @@
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 transition hover:shadow-md">
                     <div class="flex justify-between items-center">
                         <p class="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-bullseye text-purple-500"></i> Target Budget</p>
-                        <button onclick="editBudget()" class="text-xs text-slate-400 hover:text-gold-600 transition p-1 edit-only"><i class="fa-solid fa-pen"></i></button>
+                        <button id="btn-edit-budget" onclick="editBudget()" class="text-xs text-slate-400 hover:text-gold-600 transition p-1 edit-only"><i class="fa-solid fa-pen"></i></button>
                     </div>
                     <h3 id="kpi-budget-display" class="text-sm sm:text-[15px] font-bold text-purple-600 mt-1">Rp 5.000.000.000</h3>
                 </div>
@@ -224,7 +224,7 @@
                 </div>
             </div>
 
-            <!-- Table Card -->
+            <!-- Table Card Dashboard -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="px-5 py-4 border-b border-slate-50 flex justify-between items-center bg-white">
                     <h2 class="font-bold text-navy-900 text-sm sm:text-base flex items-center gap-2"><i class="fa-solid fa-list-check text-gold-500"></i> Master Schedule</h2>
@@ -247,7 +247,9 @@
                                 <th class="py-3.5 px-4 font-semibold text-center print-action-btn">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="reservation-table-body" class="divide-y divide-slate-50 text-slate-700"></tbody>
+                        <tbody id="reservation-table-body" class="divide-y divide-slate-50 text-slate-700">
+                            <!-- Injected dynamically via JS -->
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -257,8 +259,8 @@
         <div id="tab-availability" class="space-y-6 hidden">
             <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-5">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div><h2 class="text-lg font-bold text-navy-900"><i class="fa-solid fa-calendar-days text-gold-500 mr-2"></i> Room Availability</h2></div>
-                    <button onclick="renderAvailabilitySummary()" class="w-full sm:w-auto bg-slate-100 hover:bg-slate-200 text-navy-900 font-semibold px-4 py-2.5 rounded-full text-sm transition flex justify-center items-center gap-2"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                    <div><h2 class="text-lg font-bold text-navy-900"><i class="fa-solid fa-calendar-days text-gold-500 mr-2"></i> Room Availability Summary</h2></div>
+                    <button onclick="renderAvailabilitySummary()" class="w-full sm:w-auto bg-slate-100 hover:bg-slate-200 text-navy-900 font-semibold px-4 py-2.5 rounded-full text-sm transition flex justify-center items-center gap-2 print-action-btn"><i class="fa-solid fa-rotate"></i> Refresh</button>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 print-action-btn">
                     <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">From Date</label><input type="date" id="avail-from-date" onchange="renderAvailabilitySummary()" class="w-full p-3 bg-white border border-slate-200 rounded-xl text-[16px] sm:text-sm font-medium focus:outline-none focus:border-gold-500 transition-all"></div>
@@ -310,6 +312,20 @@
                     <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">Venue</label><select id="report-venue-filter" onchange="renderReportTable()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[16px] sm:text-sm focus:outline-none focus:border-gold-500 font-medium"><option value="">All</option></select></div>
                     <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">Package</label><select id="report-package-filter" onchange="renderReportTable()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[16px] sm:text-sm focus:outline-none focus:border-gold-500 font-medium"><option value="">All</option></select></div>
                 </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-5">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-center">
+                        <p class="text-[11px] text-slate-500 font-semibold uppercase tracking-wider">Total Data</p>
+                        <h4 id="rep-total-bookings" class="text-xl font-bold text-navy-900 mt-1">0</h4>
+                    </div>
+                    <div class="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-200 flex flex-col justify-center">
+                        <p class="text-[11px] text-emerald-800 font-semibold uppercase tracking-wider">Confirmed Rev</p>
+                        <h4 id="rep-confirmed-rev" class="text-lg font-bold text-emerald-600 mt-1">Rp 0</h4>
+                    </div>
+                    <div class="bg-amber-50/50 p-4 rounded-2xl border border-amber-200 flex flex-col justify-center">
+                        <p class="text-[11px] text-amber-800 font-semibold uppercase tracking-wider">Tentative Rev</p>
+                        <h4 id="rep-tentative-rev" class="text-lg font-bold text-amber-600 mt-1">Rp 0</h4>
+                    </div>
+                </div>
                 <div class="table-container pb-2 border border-slate-100 rounded-2xl">
                     <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
                         <thead>
@@ -341,10 +357,10 @@
                             <tr class="bg-slate-50 text-slate-600 uppercase text-xs tracking-wider border-b border-slate-200">
                                 <th class="py-3 px-5 font-semibold">Full Name</th>
                                 <th class="py-3 px-5 font-semibold">Username</th>
-                                <th class="py-3 px-5 font-semibold text-center">Create/Edit Booking</th>
-                                <th class="py-3 px-5 font-semibold text-center">Delete Booking</th>
-                                <th class="py-3 px-5 font-semibold text-center">View Reports</th>
-                                <th class="py-3 px-5 font-semibold text-center">Is Admin</th>
+                                <th class="py-3 px-5 font-semibold text-center">Create/Edit</th>
+                                <th class="py-3 px-5 font-semibold text-center">Delete</th>
+                                <th class="py-3 px-5 font-semibold text-center">Reports</th>
+                                <th class="py-3 px-5 font-semibold text-center">Admin</th>
                                 <th class="py-3 px-5 font-semibold text-center">Actions</th>
                             </tr>
                         </thead>
@@ -398,20 +414,13 @@
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">Segment *</label>
                             <select id="segment" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-[16px] sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 transition-all">
-                                <option value="Corporate">Corporate</option>
-                                <option value="Government">Government</option>
-                                <option value="Wedding">Wedding</option>
-                                <option value="MICE">MICE</option>
-                                <option value="Social/Family">Social/Family</option>
+                                <option value="Corporate">Corporate</option><option value="Government">Government</option><option value="Wedding">Wedding</option><option value="MICE">MICE</option><option value="Social/Family">Social/Family</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">Status *</label>
                             <select id="status" required onchange="handleStatusChangeModal()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-[16px] sm:text-sm font-bold text-navy-900 focus:bg-white focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 transition-all">
-                                <option value="Tentative">Tentative</option>
-                                <option value="Confirmed">Confirmed</option>
-                                <option value="Finished">Finished</option>
-                                <option value="Cancelled">Cancelled</option>
+                                <option value="Tentative">Tentative</option><option value="Confirmed">Confirmed</option><option value="Finished">Finished</option><option value="Cancelled">Cancelled</option>
                             </select>
                         </div>
                     </div>
@@ -420,12 +429,7 @@
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">Sales Person *</label>
                             <select id="sales-person-select" required onchange="handleSalesChange()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-[16px] sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 transition-all">
-                                <option value="Nazar">Nazar</option>
-                                <option value="Lia">Lia</option>
-                                <option value="Dapit">Dapit</option>
-                                <option value="Icha">Icha</option>
-                                <option value="Ovy">Ovy</option>
-                                <option value="Other">Other (Custom)</option>
+                                <option value="Nazar">Nazar</option><option value="Lia">Lia</option><option value="Dapit">Dapit</option><option value="Icha">Icha</option><option value="Ovy">Ovy</option><option value="Other">Other (Custom)</option>
                             </select>
                             <input type="text" id="sales-person-custom" placeholder="Type custom sales..." class="w-full mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl text-[16px] sm:text-sm hidden font-medium focus:bg-white focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500">
                         </div>
@@ -438,8 +442,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">Venue *</label>
-                            <select id="venue" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-[16px] sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 transition-all">
-                            </select>
+                            <select id="venue" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-[16px] sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 transition-all"></select>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">Bqt Cover (Pax) *</label>
@@ -456,35 +459,14 @@
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">Package *</label>
                             <select id="package-type" required onchange="handlePackageChange()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-[16px] sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 transition-all">
-                                <option value="CB">CB</option>
-                                <option value="HDM">HDM</option>
-                                <option value="FDM">FDM</option>
-                                <option value="FBD Non Res">FBD Non Res</option>
-                                <option value="FBD Res">FBD Res</option>
-                                <option value="Wedding Buffet">Wedding Buffet</option>
-                                <option value="Wedding Ciatok">Wedding Ciatok</option>
-                                <option value="Social Event">Social Event</option>
-                                <option value="Room Rent">Room Rent</option>
-                                <option value="Gathering">Gathering</option>
-                                <option value="Barbeque">Barbeque</option>
-                                <option value="Wisuda">Wisuda</option>
-                                <option value="Dinner Package">Dinner Package</option>
-                                <option value="Birthday Package">Birthday Package</option>
-                                <option value="Engagement">Engagement</option>
-                                <option value="Seminar">Seminar</option>
-                                <option value="Other">Other (Custom)</option>
+                                <option value="CB">CB</option><option value="HDM">HDM</option><option value="FDM">FDM</option><option value="FBD Non Res">FBD Non Res</option><option value="FBD Res">FBD Res</option><option value="Wedding Buffet">Wedding Buffet</option><option value="Wedding Ciatok">Wedding Ciatok</option><option value="Social Event">Social Event</option><option value="Room Rent">Room Rent</option><option value="Gathering">Gathering</option><option value="Barbeque">Barbeque</option><option value="Wisuda">Wisuda</option><option value="Dinner Package">Dinner Package</option><option value="Birthday Package">Birthday Package</option><option value="Engagement">Engagement</option><option value="Seminar">Seminar</option><option value="Other">Other (Custom)</option>
                             </select>
                             <input type="text" id="package-custom" placeholder="Custom package..." class="w-full mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl text-[16px] sm:text-sm hidden font-medium focus:bg-white focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">Set Up *</label>
                             <select id="set-up" required onchange="handleSetupChange()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-[16px] sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 transition-all">
-                                <option value="Classroom">Classroom</option>
-                                <option value="U Shape">U Shape</option>
-                                <option value="Round Table">Round Table</option>
-                                <option value="BoardRoom">BoardRoom</option>
-                                <option value="Theater">Theater</option>
-                                <option value="Other">Other (Custom)</option>
+                                <option value="Classroom">Classroom</option><option value="U Shape">U Shape</option><option value="Round Table">Round Table</option><option value="BoardRoom">BoardRoom</option><option value="Theater">Theater</option><option value="Other">Other (Custom)</option>
                             </select>
                             <input type="text" id="setup-custom" placeholder="Custom set up..." class="w-full mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl text-[16px] sm:text-sm hidden font-medium focus:bg-white focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500">
                         </div>
@@ -500,22 +482,6 @@
                         <button type="submit" class="flex-1 px-4 py-3 bg-navy-900 hover:bg-navy-800 text-white font-bold rounded-full text-sm transition-all active:scale-95 shadow-lg shadow-navy-900/20">Save Booking</button>
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Budget Modal -->
-    <div id="budget-modal" class="fixed inset-0 z-50 bg-navy-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 print:hidden">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-xs w-full p-6 space-y-5 animate-slide-up sm:animate-none">
-            <h3 class="font-bold text-sm text-navy-900 flex items-center gap-2"><i class="fa-solid fa-bullseye text-gold-500"></i> Set Target Budget</h3>
-            <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">Monthly/Yearly Target (Rp)</label>
-                <input type="text" id="input-budget-formatted" oninput="formatBudgetInput(this)" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-[16px] sm:text-sm font-bold text-navy-900 focus:bg-white focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 transition-all text-center">
-                <input type="hidden" id="input-budget-val" value="5000000000">
-            </div>
-            <div class="flex gap-3 pt-2">
-                <button type="button" onclick="closeBudgetModal()" class="flex-1 py-3 bg-slate-100 text-slate-700 font-bold rounded-full text-xs active:scale-95 transition-all">Cancel</button>
-                <button type="button" onclick="saveBudget()" class="flex-1 py-3 bg-navy-900 text-white font-bold rounded-full text-xs active:scale-95 transition-all shadow-md">Save</button>
             </div>
         </div>
     </div>
@@ -580,7 +546,6 @@
     </div>
 
 
-    <!-- JavaScript Logic & Supabase Integration -->
     <script>
         const { createClient } = supabase;
         const supabaseUrl = 'https://hupvhnvztvzqbdhuukpt.supabase.co';
@@ -609,20 +574,13 @@
                 else if(activeUser.can_edit) roleStr = "Sales Team";
                 document.getElementById('user-display-role').innerText = roleStr;
 
-                // Terapkan Otorisasi Berdasarkan Centang Database
-                if (!activeUser.can_edit) {
-                    document.querySelectorAll('.edit-only').forEach(el => el.classList.add('hidden'));
-                }
-                if (!activeUser.can_report) {
-                    document.querySelectorAll('.report-only').forEach(el => el.classList.add('hidden'));
-                }
-                if (!activeUser.is_admin) {
-                    document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
-                }
+                if (!activeUser.can_edit) { document.querySelectorAll('.edit-only').forEach(el => el.classList.add('hidden')); }
+                if (!activeUser.can_report) { document.querySelectorAll('.report-only').forEach(el => el.classList.add('hidden')); }
+                if (!activeUser.is_admin) { document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden')); }
                 
                 populateVenues();
                 loadBookings();
-                if(activeUser.is_admin) loadUsers(); // Load users if admin
+                if(activeUser.is_admin) loadUsers(); 
             }
         }
 
@@ -634,7 +592,6 @@
             const user = document.getElementById('login-username').value.toLowerCase().trim();
             const pass = document.getElementById('login-password').value;
 
-            // Query ke Database untuk cek akun
             const { data, error } = await supabaseClient.from('users').select('*').eq('username', user).eq('password', pass).single();
 
             if (data) {
@@ -659,10 +616,7 @@
         
         async function loadUsers() {
             const { data, error } = await supabaseClient.from('users').select('*').order('id', { ascending: true });
-            if (!error) {
-                userList = data || [];
-                renderUserTable();
-            }
+            if (!error) { userList = data || []; renderUserTable(); }
         }
 
         function renderUserTable() {
@@ -711,7 +665,6 @@
                 document.getElementById('user-form').reset();
             }
         }
-
         function closeUserModal() { document.getElementById('user-modal').classList.add('hidden'); }
 
         async function saveUser(e) {
@@ -752,6 +705,7 @@
                 renderUserTable();
             }
         }
+        function editUser(id) { openUserModal(id); }
 
 
         // ================= SISTEM BANQUET RESERVATION =================
@@ -771,23 +725,14 @@
 
         function populateVenues() {
             const venueSelect = document.getElementById('venue');
-            if(venueSelect) {
-                venueSelect.innerHTML = '';
-                allVenues.forEach(v => { venueSelect.innerHTML += `<option value="${v}">${v}</option>`; });
-            }
-
+            if(venueSelect) { venueSelect.innerHTML = ''; allVenues.forEach(v => { venueSelect.innerHTML += `<option value="${v}">${v}</option>`; }); }
             const filterRoom = document.getElementById('avail-room-filter');
-            if(filterRoom) {
-                filterRoom.innerHTML = '<option value="">All Meeting Rooms / Venues</option>';
-                allVenues.forEach(v => { filterRoom.innerHTML += `<option value="${v}">${v}</option>`; });
-            }
+            if(filterRoom) { filterRoom.innerHTML = '<option value="">All Meeting Rooms / Venues</option>'; allVenues.forEach(v => { filterRoom.innerHTML += `<option value="${v}">${v}</option>`; }); }
         }
 
         function formatDateID(dateStr) {
-            if (!dateStr) return '';
-            const parts = dateStr.split('-');
-            if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
-            return dateStr;
+            if (!dateStr) return ''; const parts = dateStr.split('-');
+            if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`; return dateStr;
         }
 
         function formatNumberWithDots(number) { return new Intl.NumberFormat('id-ID').format(number); }
@@ -816,8 +761,7 @@
         function saveBudget() {
             currentBudget = parseFloat(document.getElementById('input-budget-val').value) || 0;
             localStorage.setItem('banquet_budget', currentBudget);
-            closeBudgetModal();
-            renderTable();
+            closeBudgetModal(); renderTable();
         }
 
         function switchTab(tabName) {
@@ -831,33 +775,23 @@
 
             const activeTab = document.getElementById('tab-' + tabName);
             const activeNav = document.getElementById('nav-' + tabName);
-            if(activeTab) {
-                activeTab.classList.remove('hidden');
-                activeTab.classList.add('animate-fade-in');
-            }
+            if(activeTab) { activeTab.classList.remove('hidden'); activeTab.classList.add('animate-fade-in'); }
             if(activeNav) {
-                if(tabName === 'users') {
-                    activeNav.className = activeNav.className.replace('bg-transparent text-indigo-300', 'bg-indigo-300 text-navy-900 shadow-sm');
-                } else {
-                    activeNav.className = activeNav.className.replace('bg-transparent text-gray-300', 'bg-gold-500 text-navy-900 shadow-sm');
-                }
+                if(tabName === 'users') { activeNav.className = activeNav.className.replace('bg-transparent text-indigo-300', 'bg-indigo-300 text-navy-900 shadow-sm'); } 
+                else { activeNav.className = activeNav.className.replace('bg-transparent text-gray-300', 'bg-gold-500 text-navy-900 shadow-sm'); }
             }
 
             if (tabName === 'dashboard') { renderTable(); } 
             else if (tabName === 'availability') {
                 if (!document.getElementById('avail-from-date').value) {
                     let now = new Date();
-                    let firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-                    let lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
-                    document.getElementById('avail-from-date').value = firstDay;
-                    document.getElementById('avail-to-date').value = lastDay;
+                    document.getElementById('avail-from-date').value = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+                    document.getElementById('avail-to-date').value = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
                 }
                 renderAvailabilitySummary();
             } 
             else if (tabName === 'calendar') {
-                if (!document.getElementById('calendar-date-picker').value) {
-                    document.getElementById('calendar-date-picker').value = new Date().toISOString().split('T')[0];
-                }
+                if (!document.getElementById('calendar-date-picker').value) { document.getElementById('calendar-date-picker').value = new Date().toISOString().split('T')[0]; }
                 renderRoomCalendar();
             } 
             else if (tabName === 'reports') { initReports(); }
@@ -885,7 +819,6 @@
                 else if (item.status === 'Finished') statusBadge = '<span class="px-2.5 py-1 text-[10px] font-bold bg-blue-100 text-blue-700 rounded-md border border-blue-200">Finished</span>';
                 else statusBadge = '<span class="px-2.5 py-1 text-[10px] font-bold bg-rose-100 text-rose-700 rounded-md border border-rose-200">Cancelled</span>';
 
-                // Hak Akses Edit/Delete (Dinamis dari Akun)
                 const statusDropdown = activeUser.can_edit ? `
                     <select onchange="quickUpdateStatus(${item.id}, this.value)" class="text-[10px] font-bold py-1.5 px-2 rounded-md border border-slate-200 bg-white text-slate-700 focus:outline-none focus:border-gold-500 cursor-pointer shadow-sm">
                         <option value="Tentative" ${item.status === 'Tentative' ? 'selected' : ''}>Tentative</option>
@@ -895,7 +828,7 @@
                     </select>
                 ` : `<span class="px-2 py-1 bg-slate-100 rounded border border-slate-200 text-[10px] font-bold text-slate-700">${item.status}</span>`;
 
-                const btnPDF = `<button onclick="generatePDFDirect(${item.id})" class="bg-gold-500/20 text-gold-700 hover:bg-gold-500 hover:text-white w-8 h-8 rounded-lg transition-colors font-bold" title="Generate & Download Confirmation Letter (PDF)"><i class="fa-solid fa-file-pdf"></i></button>`;
+                const btnPDF = `<button onclick="generatePDFDirect(${item.id})" class="bg-gold-500/20 text-gold-700 hover:bg-gold-500 hover:text-white w-8 h-8 rounded-lg transition-colors font-bold" title="Download Confirmation Letter (PDF)"><i class="fa-solid fa-file-pdf"></i></button>`;
                 const btnCopy = activeUser.can_edit ? `<button onclick="copyBooking(${item.id})" class="bg-indigo-500/10 text-indigo-600 hover:bg-indigo-500 hover:text-white w-8 h-8 rounded-lg transition-colors font-medium" title="Copy Booking"><i class="fa-solid fa-copy"></i></button>` : '';
                 const btnEdit = activeUser.can_edit ? `<button onclick="editBooking(${item.id})" class="bg-navy-900/10 text-navy-800 hover:bg-navy-800 hover:text-white w-8 h-8 rounded-lg transition-colors font-medium" title="Edit Booking"><i class="fa-solid fa-pen-to-square"></i></button>` : '';
                 const btnDelete = activeUser.can_delete ? `<button onclick="deleteBooking(${item.id})" class="text-rose-500 hover:bg-rose-50 w-8 h-8 rounded-lg transition-colors" title="Delete"><i class="fa-solid fa-trash"></i></button>` : '';
@@ -956,16 +889,10 @@
             const roomFilter = document.getElementById('avail-room-filter').value;
             const tbody = document.getElementById('availability-table-body');
             tbody.innerHTML = '';
-
             if (!fromDateStr || !toDateStr) return;
 
-            let start = new Date(fromDateStr);
-            let end = new Date(toDateStr);
-
-            if (start > end) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-4 px-4 text-center text-rose-500 font-semibold text-sm">Date range invalid.</td></tr>`;
-                return;
-            }
+            let start = new Date(fromDateStr); let end = new Date(toDateStr);
+            if (start > end) { tbody.innerHTML = `<tr><td colspan="4" class="py-4 px-4 text-center text-rose-500 font-semibold text-sm">Date range invalid.</td></tr>`; return; }
 
             let venuesToCheck = roomFilter ? [roomFilter] : allVenues;
             let currentDate = new Date(start);
@@ -1060,33 +987,21 @@
                     set.forEach(val => sel.innerHTML += `<option value="${val}">${val}</option>`);
                 }
             }
-
-            populateSelect('report-sales-filter', salesSet, 'All Sales');
-            populateSelect('report-segment-filter', segmentSet, 'All Segments');
-            populateSelect('report-venue-filter', venueSet, 'All Venues');
-            populateSelect('report-package-filter', packageSet, 'All Packages');
-
+            populateSelect('report-sales-filter', salesSet, 'All Sales'); populateSelect('report-segment-filter', segmentSet, 'All Segments');
+            populateSelect('report-venue-filter', venueSet, 'All Venues'); populateSelect('report-package-filter', packageSet, 'All Packages');
             renderReportTable();
         }
 
         function renderReportTable() {
-            const fromDate = document.getElementById('report-from-date').value;
-            const toDate = document.getElementById('report-to-date').value;
-            const salesFilter = document.getElementById('report-sales-filter').value;
-            const segmentFilter = document.getElementById('report-segment-filter').value;
-            const venueFilter = document.getElementById('report-venue-filter').value;
-            const packageFilter = document.getElementById('report-package-filter').value;
+            const fromDate = document.getElementById('report-from-date').value; const toDate = document.getElementById('report-to-date').value;
+            const salesFilter = document.getElementById('report-sales-filter').value; const segmentFilter = document.getElementById('report-segment-filter').value;
+            const venueFilter = document.getElementById('report-venue-filter').value; const packageFilter = document.getElementById('report-package-filter').value;
 
             const filtered = bookings.filter(item => {
                 let matchDate = true;
-                if (fromDate && item.datetime < fromDate) matchDate = false;
-                if (toDate && item.datetime > toDate) matchDate = false;
-
-                const matchSales = salesFilter === "" || item.salesperson === salesFilter;
-                const matchSegment = segmentFilter === "" || item.segment === segmentFilter;
-                const matchVenue = venueFilter === "" || item.venue === venueFilter;
-                const matchPackage = packageFilter === "" || item.packagetype === packageFilter;
-
+                if (fromDate && item.datetime < fromDate) matchDate = false; if (toDate && item.datetime > toDate) matchDate = false;
+                const matchSales = salesFilter === "" || item.salesperson === salesFilter; const matchSegment = segmentFilter === "" || item.segment === segmentFilter;
+                const matchVenue = venueFilter === "" || item.venue === venueFilter; const matchPackage = packageFilter === "" || item.packagetype === packageFilter;
                 return matchDate && matchSales && matchSegment && matchVenue && matchPackage;
             });
 
@@ -1103,10 +1018,8 @@
                 if (item.status === 'Confirmed' || item.status === 'Finished') repConfirmedRev += rev;
                 else if (item.status === 'Tentative') repTentativeRev += rev;
 
-                const statusText = item.status;
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 border-b border-slate-100";
-                
                 tr.innerHTML = `
                     <td class="py-3 px-4 font-medium text-slate-600">${formatDateID(item.datetime)}</td>
                     <td class="py-3 px-4">
@@ -1117,7 +1030,7 @@
                     <td class="py-3 px-4 font-medium">${item.packagetype}</td>
                     <td class="py-3 px-4 text-right font-medium">${item.bqtcover}</td>
                     <td class="py-3 px-4 text-right font-bold text-navy-900">${formatIDR(rev)}</td>
-                    <td class="py-3 px-4 text-center font-bold text-slate-700">${statusText}</td>
+                    <td class="py-3 px-4 text-center font-bold text-slate-700">${item.status}</td>
                     <td class="py-3 px-4 font-medium text-slate-600">${item.salesperson}</td>
                     <td class="py-3 px-4 text-xs text-slate-500 max-w-[130px] truncate" title="${item.remark || '-'}">${item.remark || '-'}</td>
                 `;
@@ -1130,12 +1043,9 @@
         }
 
         function refreshReport() {
-            document.getElementById('report-from-date').value = '';
-            document.getElementById('report-to-date').value = '';
-            document.getElementById('report-sales-filter').value = '';
-            document.getElementById('report-segment-filter').value = '';
-            document.getElementById('report-venue-filter').value = '';
-            document.getElementById('report-package-filter').value = '';
+            document.getElementById('report-from-date').value = ''; document.getElementById('report-to-date').value = '';
+            document.getElementById('report-sales-filter').value = ''; document.getElementById('report-segment-filter').value = '';
+            document.getElementById('report-venue-filter').value = ''; document.getElementById('report-package-filter').value = '';
             renderReportTable();
         }
 
@@ -1154,39 +1064,26 @@
         }
 
         function handleSalesChange() {
-            const val = document.getElementById('sales-person-select').value;
-            const custom = document.getElementById('sales-person-custom');
-            if (val === 'Other') { custom.classList.remove('hidden'); custom.required = true; } 
-            else { custom.classList.add('hidden'); custom.required = false; custom.value = ''; }
+            const val = document.getElementById('sales-person-select').value; const custom = document.getElementById('sales-person-custom');
+            if (val === 'Other') { custom.classList.remove('hidden'); custom.required = true; } else { custom.classList.add('hidden'); custom.required = false; custom.value = ''; }
         }
 
         function handlePackageChange() {
-            const val = document.getElementById('package-type').value;
-            const custom = document.getElementById('package-custom');
-            if (val === 'Other') { custom.classList.remove('hidden'); custom.required = true; } 
-            else { custom.classList.add('hidden'); custom.required = false; custom.value = ''; }
+            const val = document.getElementById('package-type').value; const custom = document.getElementById('package-custom');
+            if (val === 'Other') { custom.classList.remove('hidden'); custom.required = true; } else { custom.classList.add('hidden'); custom.required = false; custom.value = ''; }
         }
 
         function handleSetupChange() {
-            const val = document.getElementById('set-up').value;
-            const custom = document.getElementById('setup-custom');
-            if (val === 'Other') { custom.classList.remove('hidden'); custom.required = true; } 
-            else { custom.classList.add('hidden'); custom.required = false; custom.value = ''; }
+            const val = document.getElementById('set-up').value; const custom = document.getElementById('setup-custom');
+            if (val === 'Other') { custom.classList.remove('hidden'); custom.required = true; } else { custom.classList.add('hidden'); custom.required = false; custom.value = ''; }
         }
 
         function handleStatusChangeModal() {
-            const val = document.getElementById('status').value;
-            const label = document.getElementById('remark-label');
-            const remark = document.getElementById('remark');
-            if (val === 'Cancelled') { label.innerHTML = 'Reason for Cancellation *'; remark.required = true; } 
-            else { label.innerHTML = 'Remark / Notes'; remark.required = false; }
+            const val = document.getElementById('status').value; const label = document.getElementById('remark-label'); const remark = document.getElementById('remark');
+            if (val === 'Cancelled') { label.innerHTML = 'Reason for Cancellation *'; remark.required = true; } else { label.innerHTML = 'Remark / Notes'; remark.required = false; }
         }
 
-        function quickBookVenue(venueName, dateStr) {
-            openModal();
-            document.getElementById('venue').value = venueName;
-            document.getElementById('date-time').value = dateStr;
-        }
+        function quickBookVenue(venueName, dateStr) { openModal(); document.getElementById('venue').value = venueName; document.getElementById('date-time').value = dateStr; }
 
         function openModal(editId = null) {
             document.getElementById('booking-modal').classList.remove('hidden');
@@ -1196,21 +1093,14 @@
 
             if (editId !== null) {
                 document.getElementById('modal-title').innerHTML = '<i class="fa-solid fa-pen-to-square text-gold-500"></i> Edit Reservation';
-                document.getElementById('edit-id').value = editId;
-                const item = bookings.find(b => b.id == editId);
+                document.getElementById('edit-id').value = editId; const item = bookings.find(b => b.id == editId);
                 
-                document.getElementById('group-name').value = item.groupname;
-                document.getElementById('pic-booker').value = item.picbooker;
-                document.getElementById('client-address').value = item.clientaddress || '';
-                document.getElementById('client-wa').value = item.clientwa || '';
-                document.getElementById('beo-memo').value = item.beomemo;
-                document.getElementById('segment').value = item.segment;
-                document.getElementById('status').value = item.status;
-                document.getElementById('date-time').value = item.datetime;
-                document.getElementById('venue').value = item.venue;
-                document.getElementById('bqt-cover').value = item.bqtcover;
-                document.getElementById('price').value = item.price;
-                document.getElementById('price-formatted').value = formatNumberWithDots(item.price);
+                document.getElementById('group-name').value = item.groupname; document.getElementById('pic-booker').value = item.picbooker;
+                document.getElementById('client-address').value = item.clientaddress || ''; document.getElementById('client-wa').value = item.clientwa || '';
+                document.getElementById('beo-memo').value = item.beomemo; document.getElementById('segment').value = item.segment;
+                document.getElementById('status').value = item.status; document.getElementById('date-time').value = item.datetime;
+                document.getElementById('venue').value = item.venue; document.getElementById('bqt-cover').value = item.bqtcover;
+                document.getElementById('price').value = item.price; document.getElementById('price-formatted').value = formatNumberWithDots(item.price);
                 document.getElementById('remark').value = item.remark || '';
                 
                 handleStatusChangeModal();
@@ -1225,14 +1115,9 @@
                 else { document.getElementById('set-up').value = 'Other'; document.getElementById('setup-custom').classList.remove('hidden'); document.getElementById('setup-custom').value = item.setup; }
             } else {
                 document.getElementById('modal-title').innerHTML = '<i class="fa-solid fa-circle-plus text-gold-500"></i> New Reservation';
-                document.getElementById('edit-id').value = '';
-                document.getElementById('booking-form').reset();
-                document.getElementById('sales-person-custom').classList.add('hidden');
-                document.getElementById('package-custom').classList.add('hidden');
-                document.getElementById('setup-custom').classList.add('hidden');
-                document.getElementById('price').value = 350000;
-                document.getElementById('price-formatted').value = "350.000";
-                handleStatusChangeModal();
+                document.getElementById('edit-id').value = ''; document.getElementById('booking-form').reset();
+                document.getElementById('sales-person-custom').classList.add('hidden'); document.getElementById('package-custom').classList.add('hidden'); document.getElementById('setup-custom').classList.add('hidden');
+                document.getElementById('price').value = 350000; document.getElementById('price-formatted').value = "350.000"; handleStatusChangeModal();
                 if(!document.getElementById('date-time').value) { document.getElementById('date-time').value = new Date().toISOString().split('T')[0]; }
             }
         }
@@ -1240,8 +1125,7 @@
         function closeModal() { document.getElementById('booking-modal').classList.add('hidden'); }
 
         async function saveBooking(event) {
-            event.preventDefault();
-            const editId = document.getElementById('edit-id').value;
+            event.preventDefault(); const editId = document.getElementById('edit-id').value;
             let salesVal = document.getElementById('sales-person-select').value; if (salesVal === 'Other') salesVal = document.getElementById('sales-person-custom').value;
             let pkgVal = document.getElementById('package-type').value; if (pkgVal === 'Other') pkgVal = document.getElementById('package-custom').value;
             let setupVal = document.getElementById('set-up').value; if (setupVal === 'Other') setupVal = document.getElementById('setup-custom').value;
@@ -1254,8 +1138,7 @@
                 packagetype: pkgVal, setup: setupVal, remark: document.getElementById('remark').value
             };
 
-            closeModal();
-            document.getElementById('loading-indicator').classList.remove('hidden');
+            closeModal(); document.getElementById('loading-indicator').classList.remove('hidden');
 
             if (editId === "") {
                 const { data, error } = await supabaseClient.from('reservations').insert([dbItem]).select();
@@ -1265,9 +1148,7 @@
                 if (!error && data) { const idx = bookings.findIndex(b => b.id == editId); if (idx !== -1) bookings[idx] = data[0]; }
             }
 
-            document.getElementById('loading-indicator').classList.add('hidden');
-            renderTable();
-            renderRoomCalendar();
+            document.getElementById('loading-indicator').classList.add('hidden'); renderTable(); renderRoomCalendar();
         }
 
         async function quickUpdateStatus(id, newStatus) {
@@ -1277,37 +1158,29 @@
                 if (reason !== null) bookings[index].remark = "CANCELLED REASON: " + reason; else { renderTable(); return; }
             }
             bookings[index].status = newStatus;
-            await supabaseClient.from('reservations').update({ status: newStatus, remark: bookings[index].remark }).eq('id', id);
-            renderTable();
+            await supabaseClient.from('reservations').update({ status: newStatus, remark: bookings[index].remark }).eq('id', id); renderTable();
         }
 
         function editBooking(id) { openModal(id); }
 
         async function copyBooking(id) {
             document.getElementById('loading-indicator').classList.remove('hidden');
-            const item = bookings.find(b => b.id == id);
-            const copiedItem = { ...item };
-            delete copiedItem.id; 
-            copiedItem.groupname = item.groupname + " (Copy)";
-            copiedItem.beomemo = 'BEO-2026-' + Math.floor(100 + Math.random() * 900);
-            copiedItem.status = "Tentative";
+            const item = bookings.find(b => b.id == id); const copiedItem = { ...item }; delete copiedItem.id; 
+            copiedItem.groupname = item.groupname + " (Copy)"; copiedItem.beomemo = 'BEO-2026-' + Math.floor(100 + Math.random() * 900); copiedItem.status = "Tentative";
             const { data, error } = await supabaseClient.from('reservations').insert([copiedItem]).select();
             if (!error && data) { bookings.push(data[0]); }
-            document.getElementById('loading-indicator').classList.add('hidden');
-            renderTable(); renderRoomCalendar();
+            document.getElementById('loading-indicator').classList.add('hidden'); renderTable(); renderRoomCalendar();
         }
 
         async function deleteBooking(id) {
             if (confirm("Delete this banquet reservation?")) {
                 document.getElementById('loading-indicator').classList.remove('hidden');
                 await supabaseClient.from('reservations').delete().eq('id', id);
-                bookings = bookings.filter(b => b.id != id);
-                document.getElementById('loading-indicator').classList.add('hidden');
-                renderTable(); renderRoomCalendar();
+                bookings = bookings.filter(b => b.id != id); document.getElementById('loading-indicator').classList.add('hidden'); renderTable(); renderRoomCalendar();
             }
         }
 
-        // ================= SISTEM GENERATE & DOWNLOAD PDF LANGSUNG (Menggunakan HTML2PDF) =================
+        // ================= SISTEM GENERATE & DOWNLOAD PDF LANGSUNG =================
         function generatePDFDirect(id) {
             document.getElementById('loading-indicator').classList.remove('hidden');
             const item = bookings.find(b => b.id == id);
@@ -1468,6 +1341,7 @@
             });
         }
 
+        // FUNGSI EXPORT EXCEL KHUSUS (Angka Murni / Raw Numbers)
         function exportExcelReport() {
             if (currentReportData.length === 0) { alert("Tidak ada data untuk diexport."); return; }
             const excelData = currentReportData.map(item => ({
