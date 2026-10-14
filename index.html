@@ -7,11 +7,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="white">
     <title>Banquet System - Platinum Hotel & Convention Hall</title>
     
-    <!-- Favicon -->
+    <!-- Favicon & Apple Touch Icon -->
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="logo.png">
     
-    <!-- Fonts -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -56,8 +56,6 @@
             body > header, .print-action-btn, #budget-modal, #booking-modal, #login-screen, #user-modal { display: none !important; }
             main { padding: 0 !important; margin: 0 !important; }
         }
-        
-        /* Checkbox Custom Styling */
         input[type="checkbox"]:checked { background-color: #c5a059 !important; border-color: #c5a059 !important; }
     </style>
 </head>
@@ -157,7 +155,7 @@
         <!-- Loading Data Global -->
         <div id="loading-indicator" class="text-center py-4 hidden">
             <i class="fa-solid fa-circle-notch fa-spin text-gold-500 text-2xl"></i>
-            <p class="text-xs text-slate-500 mt-2 font-medium">Syncing with Cloud Database...</p>
+            <p class="text-xs text-slate-500 mt-2 font-medium">Memproses Data...</p>
         </div>
 
         <!-- ================= TAB 1: DASHBOARD ================= -->
@@ -188,7 +186,7 @@
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 transition hover:shadow-md">
                     <div class="flex justify-between items-center">
                         <p class="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-bullseye text-purple-500"></i> Target Budget</p>
-                        <button id="btn-edit-budget" onclick="editBudget()" class="text-xs text-slate-400 hover:text-gold-600 transition p-1 edit-only"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="editBudget()" class="text-xs text-slate-400 hover:text-gold-600 transition p-1 edit-only"><i class="fa-solid fa-pen"></i></button>
                     </div>
                     <h3 id="kpi-budget-display" class="text-sm sm:text-[15px] font-bold text-purple-600 mt-1">Rp 5.000.000.000</h3>
                 </div>
@@ -610,7 +608,6 @@
             }
         }
 
-
         // ================= USER MANAGEMENT LOGIC (ADMIN) =================
         let userList = [];
         
@@ -723,6 +720,23 @@
             "Rhodium 11", "Rhodium 12", "Canton Restaurant", "PDR Canton", "PDR Palladium"
         ];
 
+        async function loadBookings() {
+            document.getElementById('loading-indicator').classList.remove('hidden');
+            const { data, error } = await supabaseClient.from('reservations').select('*');
+            
+            if (error) {
+                alert("⚠️ GAGAL MENARIK DATA DARI DATABASE!\n\nPesan Error: " + error.message);
+                console.error("Supabase Fetch Error:", error);
+            } else {
+                bookings = data || [];
+            }
+            
+            document.getElementById('loading-indicator').classList.add('hidden');
+            renderTable();
+            renderAvailabilitySummary();
+            renderRoomCalendar();
+        }
+
         function populateVenues() {
             const venueSelect = document.getElementById('venue');
             if(venueSelect) { venueSelect.innerHTML = ''; allVenues.forEach(v => { venueSelect.innerHTML += `<option value="${v}">${v}</option>`; }); }
@@ -806,18 +820,12 @@
             let confirmedRev = 0, tentativeRev = 0, totalCovers = 0, cancelledCount = 0;
 
             sortedData.forEach((item) => {
-                const totalRev = item.bqtcover * item.price;
+                const totalRev = (parseInt(item.bqtcover) || 0) * (parseFloat(item.price) || 0);
                 if (item.status === 'Confirmed' || item.status === 'Finished') confirmedRev += totalRev;
                 else if (item.status === 'Tentative') tentativeRev += totalRev;
                 else if (item.status === 'Cancelled') cancelledCount++;
                 
                 totalCovers += parseInt(item.bqtcover || 0);
-
-                let statusBadge = '';
-                if (item.status === 'Confirmed') statusBadge = '<span class="px-2.5 py-1 text-[10px] font-bold bg-emerald-100 text-emerald-700 rounded-md border border-emerald-200">Confirmed</span>';
-                else if (item.status === 'Tentative') statusBadge = '<span class="px-2.5 py-1 text-[10px] font-bold bg-amber-100 text-amber-700 rounded-md border border-amber-200">Tentative</span>';
-                else if (item.status === 'Finished') statusBadge = '<span class="px-2.5 py-1 text-[10px] font-bold bg-blue-100 text-blue-700 rounded-md border border-blue-200">Finished</span>';
-                else statusBadge = '<span class="px-2.5 py-1 text-[10px] font-bold bg-rose-100 text-rose-700 rounded-md border border-rose-200">Cancelled</span>';
 
                 const statusDropdown = activeUser.can_edit ? `
                     <select onchange="quickUpdateStatus(${item.id}, this.value)" class="text-[10px] font-bold py-1.5 px-2 rounded-md border border-slate-200 bg-white text-slate-700 focus:outline-none focus:border-gold-500 cursor-pointer shadow-sm">
@@ -847,7 +855,7 @@
                     <td class="py-3.5 px-4 font-bold text-navy-800">${item.venue}</td>
                     <td class="py-3.5 px-4">
                         <div class="font-medium text-slate-800">${item.packagetype}</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5">${item.setup} Setup</div>
+                        <div class="text-[10px] text-slate-500 mt-0.5">${item.setup || '-'} Setup</div>
                     </td>
                     <td class="py-3.5 px-4 text-right font-medium text-slate-700">${item.bqtcover}</td>
                     <td class="py-3.5 px-4 text-right font-bold text-navy-900">${formatIDR(totalRev)}</td>
@@ -987,21 +995,33 @@
                     set.forEach(val => sel.innerHTML += `<option value="${val}">${val}</option>`);
                 }
             }
-            populateSelect('report-sales-filter', salesSet, 'All Sales'); populateSelect('report-segment-filter', segmentSet, 'All Segments');
-            populateSelect('report-venue-filter', venueSet, 'All Venues'); populateSelect('report-package-filter', packageSet, 'All Packages');
+
+            populateSelect('report-sales-filter', salesSet, 'All Sales');
+            populateSelect('report-segment-filter', segmentSet, 'All Segments');
+            populateSelect('report-venue-filter', venueSet, 'All Venues');
+            populateSelect('report-package-filter', packageSet, 'All Packages');
+
             renderReportTable();
         }
 
         function renderReportTable() {
-            const fromDate = document.getElementById('report-from-date').value; const toDate = document.getElementById('report-to-date').value;
-            const salesFilter = document.getElementById('report-sales-filter').value; const segmentFilter = document.getElementById('report-segment-filter').value;
-            const venueFilter = document.getElementById('report-venue-filter').value; const packageFilter = document.getElementById('report-package-filter').value;
+            const fromDate = document.getElementById('report-from-date').value;
+            const toDate = document.getElementById('report-to-date').value;
+            const salesFilter = document.getElementById('report-sales-filter').value;
+            const segmentFilter = document.getElementById('report-segment-filter').value;
+            const venueFilter = document.getElementById('report-venue-filter').value;
+            const packageFilter = document.getElementById('report-package-filter').value;
 
             const filtered = bookings.filter(item => {
                 let matchDate = true;
-                if (fromDate && item.datetime < fromDate) matchDate = false; if (toDate && item.datetime > toDate) matchDate = false;
-                const matchSales = salesFilter === "" || item.salesperson === salesFilter; const matchSegment = segmentFilter === "" || item.segment === segmentFilter;
-                const matchVenue = venueFilter === "" || item.venue === venueFilter; const matchPackage = packageFilter === "" || item.packagetype === packageFilter;
+                if (fromDate && item.datetime < fromDate) matchDate = false;
+                if (toDate && item.datetime > toDate) matchDate = false;
+
+                const matchSales = salesFilter === "" || item.salesperson === salesFilter;
+                const matchSegment = segmentFilter === "" || item.segment === segmentFilter;
+                const matchVenue = venueFilter === "" || item.venue === venueFilter;
+                const matchPackage = packageFilter === "" || item.packagetype === packageFilter;
+
                 return matchDate && matchSales && matchSegment && matchVenue && matchPackage;
             });
 
@@ -1014,23 +1034,25 @@
             let repBookings = sortedFiltered.length, repConfirmedRev = 0, repTentativeRev = 0;
 
             sortedFiltered.forEach(item => {
-                const rev = item.bqtcover * item.price;
+                const rev = (parseInt(item.bqtcover) || 0) * (parseFloat(item.price) || 0);
                 if (item.status === 'Confirmed' || item.status === 'Finished') repConfirmedRev += rev;
                 else if (item.status === 'Tentative') repTentativeRev += rev;
 
+                const statusText = item.status;
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 border-b border-slate-100";
+                
                 tr.innerHTML = `
                     <td class="py-3 px-4 font-medium text-slate-600">${formatDateID(item.datetime)}</td>
                     <td class="py-3 px-4">
                         <span class="font-bold text-navy-900 block">${item.groupname}</span>
                         <span class="text-[10px] text-slate-500 font-normal block mt-0.5">PIC: ${item.picbooker}</span>
                     </td>
-                    <td class="py-3 px-4 font-semibold text-navy-800">${item.venue} <span class="text-[10px] text-slate-500 font-normal block mt-0.5">${item.setup} Setup</span></td>
+                    <td class="py-3 px-4 font-semibold text-navy-800">${item.venue} <span class="text-[10px] text-slate-500 font-normal block mt-0.5">${item.setup || '-'} Setup</span></td>
                     <td class="py-3 px-4 font-medium">${item.packagetype}</td>
                     <td class="py-3 px-4 text-right font-medium">${item.bqtcover}</td>
                     <td class="py-3 px-4 text-right font-bold text-navy-900">${formatIDR(rev)}</td>
-                    <td class="py-3 px-4 text-center font-bold text-slate-700">${item.status}</td>
+                    <td class="py-3 px-4 text-center font-bold text-slate-700">${statusText}</td>
                     <td class="py-3 px-4 font-medium text-slate-600">${item.salesperson}</td>
                     <td class="py-3 px-4 text-xs text-slate-500 max-w-[130px] truncate" title="${item.remark || '-'}">${item.remark || '-'}</td>
                 `;
@@ -1043,9 +1065,12 @@
         }
 
         function refreshReport() {
-            document.getElementById('report-from-date').value = ''; document.getElementById('report-to-date').value = '';
-            document.getElementById('report-sales-filter').value = ''; document.getElementById('report-segment-filter').value = '';
-            document.getElementById('report-venue-filter').value = ''; document.getElementById('report-package-filter').value = '';
+            document.getElementById('report-from-date').value = '';
+            document.getElementById('report-to-date').value = '';
+            document.getElementById('report-sales-filter').value = '';
+            document.getElementById('report-segment-filter').value = '';
+            document.getElementById('report-venue-filter').value = '';
+            document.getElementById('report-package-filter').value = '';
             renderReportTable();
         }
 
@@ -1125,30 +1150,61 @@
         function closeModal() { document.getElementById('booking-modal').classList.add('hidden'); }
 
         async function saveBooking(event) {
-            event.preventDefault(); const editId = document.getElementById('edit-id').value;
+            event.preventDefault();
+            const editId = document.getElementById('edit-id').value;
             let salesVal = document.getElementById('sales-person-select').value; if (salesVal === 'Other') salesVal = document.getElementById('sales-person-custom').value;
             let pkgVal = document.getElementById('package-type').value; if (pkgVal === 'Other') pkgVal = document.getElementById('package-custom').value;
             let setupVal = document.getElementById('set-up').value; if (setupVal === 'Other') setupVal = document.getElementById('setup-custom').value;
 
+            // FIX ANGKA KOSONG (NaN) YANG DITOLAK DATABASE
+            const finalCover = parseInt(document.getElementById('bqt-cover').value) || 0;
+            const finalPrice = parseFloat(document.getElementById('price').value) || 0;
+
             const dbItem = {
-                groupname: document.getElementById('group-name').value, picbooker: document.getElementById('pic-booker').value, clientaddress: document.getElementById('client-address').value,
-                clientwa: document.getElementById('client-wa').value, beomemo: document.getElementById('beo-memo').value || 'BEO-2026-' + Math.floor(100 + Math.random() * 900),
-                segment: document.getElementById('segment').value, status: document.getElementById('status').value, salesperson: salesVal, datetime: document.getElementById('date-time').value,
-                venue: document.getElementById('venue').value, bqtcover: parseInt(document.getElementById('bqt-cover').value), price: parseFloat(document.getElementById('price').value),
-                packagetype: pkgVal, setup: setupVal, remark: document.getElementById('remark').value
+                groupname: document.getElementById('group-name').value,
+                picbooker: document.getElementById('pic-booker').value,
+                clientaddress: document.getElementById('client-address').value,
+                clientwa: document.getElementById('client-wa').value,
+                beomemo: document.getElementById('beo-memo').value || 'BEO-2026-' + Math.floor(100 + Math.random() * 900),
+                segment: document.getElementById('segment').value,
+                status: document.getElementById('status').value,
+                salesperson: salesVal,
+                datetime: document.getElementById('date-time').value,
+                venue: document.getElementById('venue').value,
+                bqtcover: finalCover,
+                price: finalPrice,
+                packagetype: pkgVal,
+                setup: setupVal,
+                remark: document.getElementById('remark').value
             };
 
-            closeModal(); document.getElementById('loading-indicator').classList.remove('hidden');
+            closeModal();
+            document.getElementById('loading-indicator').classList.remove('hidden');
 
             if (editId === "") {
                 const { data, error } = await supabaseClient.from('reservations').insert([dbItem]).select();
-                if (!error && data) bookings.push(data[0]);
+                if (error) {
+                    alert("⚠️ GAGAL MENYIMPAN DATA!\n\nDatabase Menolak:\n" + error.message);
+                    console.error("Supabase Error:", error);
+                } else if (data) {
+                    bookings.push(data[0]);
+                    alert("✅ Reservasi Baru Berhasil Disimpan di Database!");
+                }
             } else {
                 const { data, error } = await supabaseClient.from('reservations').update(dbItem).eq('id', editId).select();
-                if (!error && data) { const idx = bookings.findIndex(b => b.id == editId); if (idx !== -1) bookings[idx] = data[0]; }
+                if (error) {
+                    alert("⚠️ GAGAL MENGUBAH DATA!\n\nDatabase Menolak:\n" + error.message);
+                    console.error("Supabase Error:", error);
+                } else if (data) {
+                    const idx = bookings.findIndex(b => b.id == editId);
+                    if (idx !== -1) bookings[idx] = data[0];
+                    alert("✅ Data Reservasi Berhasil Diperbarui!");
+                }
             }
 
-            document.getElementById('loading-indicator').classList.add('hidden'); renderTable(); renderRoomCalendar();
+            document.getElementById('loading-indicator').classList.add('hidden');
+            renderTable();
+            renderRoomCalendar();
         }
 
         async function quickUpdateStatus(id, newStatus) {
@@ -1158,25 +1214,50 @@
                 if (reason !== null) bookings[index].remark = "CANCELLED REASON: " + reason; else { renderTable(); return; }
             }
             bookings[index].status = newStatus;
-            await supabaseClient.from('reservations').update({ status: newStatus, remark: bookings[index].remark }).eq('id', id); renderTable();
+            
+            const { error } = await supabaseClient.from('reservations').update({ status: newStatus, remark: bookings[index].remark }).eq('id', id);
+            if(error) alert("Gagal ubah status: " + error.message);
+            
+            renderTable();
         }
 
         function editBooking(id) { openModal(id); }
 
         async function copyBooking(id) {
             document.getElementById('loading-indicator').classList.remove('hidden');
-            const item = bookings.find(b => b.id == id); const copiedItem = { ...item }; delete copiedItem.id; 
-            copiedItem.groupname = item.groupname + " (Copy)"; copiedItem.beomemo = 'BEO-2026-' + Math.floor(100 + Math.random() * 900); copiedItem.status = "Tentative";
+            const item = bookings.find(b => b.id == id);
+            const copiedItem = { ...item };
+            delete copiedItem.id; 
+            copiedItem.groupname = item.groupname + " (Copy)";
+            copiedItem.beomemo = 'BEO-2026-' + Math.floor(100 + Math.random() * 900);
+            copiedItem.status = "Tentative";
+
             const { data, error } = await supabaseClient.from('reservations').insert([copiedItem]).select();
-            if (!error && data) { bookings.push(data[0]); }
-            document.getElementById('loading-indicator').classList.add('hidden'); renderTable(); renderRoomCalendar();
+            if (error) {
+                alert("Gagal Duplikat Data: " + error.message);
+            } else if (data) {
+                bookings.push(data[0]);
+                alert("✅ Data Berhasil Diduplikat!");
+            }
+
+            document.getElementById('loading-indicator').classList.add('hidden');
+            renderTable(); renderRoomCalendar();
         }
 
         async function deleteBooking(id) {
-            if (confirm("Delete this banquet reservation?")) {
+            if (confirm("Hapus data reservasi ini secara permanen dari Database?")) {
                 document.getElementById('loading-indicator').classList.remove('hidden');
-                await supabaseClient.from('reservations').delete().eq('id', id);
-                bookings = bookings.filter(b => b.id != id); document.getElementById('loading-indicator').classList.add('hidden'); renderTable(); renderRoomCalendar();
+                
+                const { error } = await supabaseClient.from('reservations').delete().eq('id', id);
+                if(error) {
+                    alert("Gagal Menghapus Data: " + error.message);
+                } else {
+                    bookings = bookings.filter(b => b.id != id);
+                    alert("🗑️ Data berhasil dihapus!");
+                }
+
+                document.getElementById('loading-indicator').classList.add('hidden');
+                renderTable(); renderRoomCalendar();
             }
         }
 
@@ -1184,7 +1265,7 @@
         function generatePDFDirect(id) {
             document.getElementById('loading-indicator').classList.remove('hidden');
             const item = bookings.find(b => b.id == id);
-            const totalRev = item.bqtcover * item.price;
+            const totalRev = (parseInt(item.bqtcover) || 0) * (parseFloat(item.price) || 0);
             
             const refNo = item.beomemo;
             const dateIssued = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'long', year: 'numeric'});
@@ -1194,7 +1275,7 @@
             const dateEvent = formatDateID(item.datetime);
             const venueEvent = item.venue.toUpperCase();
             const pax = item.bqtcover;
-            const pkg = item.packagetype + " (" + item.setup + ")";
+            const pkg = item.packagetype + " (" + (item.setup || 'No') + ")";
             const rate = formatIDR(item.price);
             const total = formatIDR(totalRev);
             const salesName = item.salesperson;
@@ -1239,7 +1320,7 @@
                             <tr><td style="color: #555;">Venue</td><td>: <b style="color: #1e3a8a;">${venueEvent}</b></td></tr>
                             <tr><td style="color: #555;">Waktu</td><td>: 18.00 - 22.00 / By Arrangement</td></tr>
                             <tr><td style="color: #555;">Jumlah Pax</td><td>: <b>${pax} PAX</b></td></tr>
-                            <tr><td style="color: #555;">Setup</td><td>: ${item.setup.toUpperCase()}</td></tr>
+                            <tr><td style="color: #555;">Setup</td><td>: ${(item.setup || '-').toUpperCase()}</td></tr>
                         </table>
 
                         <h3 style="font-size: 11pt; font-weight: bold; margin-top: 25px; color: #0a1525; border-bottom: 1px solid #eee; padding-bottom: 5px;">ESTIMASI BIAYA</h3>
@@ -1347,7 +1428,7 @@
             const excelData = currentReportData.map(item => ({
                 "Tanggal": formatDateID(item.datetime), "Group / Event": item.groupname, "PIC / Booker": item.picbooker,
                 "Segment": item.segment, "Venue": item.venue, "Package": item.packagetype, "Set Up": item.setup,
-                "Cover": parseInt(item.bqtcover), "Revenue": parseInt(item.bqtcover * item.price), 
+                "Cover": parseInt(item.bqtcover) || 0, "Revenue": (parseInt(item.bqtcover) || 0) * (parseFloat(item.price) || 0), 
                 "Status": item.status, "Sales Person": item.salesperson, "Remark / Notes": item.remark || "-"
             }));
             const ws = XLSX.utils.json_to_sheet(excelData); const wb = XLSX.utils.book_new();
